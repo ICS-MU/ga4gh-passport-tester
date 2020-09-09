@@ -1,28 +1,52 @@
-function rawlog(area,msg) {
+function rawlog(area, msg) {
     document.getElementById(area).innerText = '';
-    if(typeof msg !== 'string') {
+    if (typeof msg !== 'string') {
         msg = JSON.stringify(msg, null, 2);
     }
     document.getElementById(area).innerHTML += msg + '\r\n';
 }
 
-function log() {
-    document.getElementById(results).innerText = '';
-
-    Array.prototype.forEach.call(arguments, function (msg) {
-        if (msg instanceof Error) {
-            msg = "Error: " + msg.message;
-        }
-        else if (typeof msg !== 'string') {
-            msg = JSON.stringify(msg, null, 2);
-        }
-        document.getElementById('results').innerHTML += msg + '\r\n';
-    });
-}
-
 document.getElementById("login").addEventListener("click", login, false);
+document.getElementById("logout").addEventListener("click", logout, false);
 
 var mgr = new Oidc.UserManager(config);
+
+const ISSUERS = {
+    'https://ega.ebi.ac.uk:8053/ega-openid-connect-server/': 'EGA',
+    'https://jwt-elixir-rems-proxy.rahtiapp.fi/':'REMS',
+    'https://permissions-sds.rahtiapp.fi/':'REMS-SDS',
+    'https://login.elixir-czech.org/oidc/': 'ELIXIR'
+};
+const SIGNERS = {
+    'https://ega.ebi.ac.uk:8053/ega-openid-connect-server/jwk': 'EGA',
+    'https://jwt-elixir-rems-proxy.rahtiapp.fi/jwks.json' : 'REMS',
+    'https://permissions-sds.rahtiapp.fi/jwks.json': 'REMS-SDS',
+    'https://login.elixir-czech.org/oidc/jwk': 'ELIXIR',
+};
+const POLICIES = {
+    'https://doi.org/10.1038/s41431-018-0219-y': 'The attestations for registered access (<a href="https://elixir-europe.org/services/compute/aai/bonafide">link</a>)'
+};
+const STATUSES = {
+    'https://doi.org/10.1038/s41431-018-0219-y': 'Bona Fide researcher or registered access (<a href="https://elixir-europe.org/services/compute/aai/bonafide">link</a>)'
+}
+function expert_table(visaInfo) {
+    const visa = visaInfo.visa;
+    const timeFormat = new Intl.DateTimeFormat('en-GB', { 'dateStyle': 'full', 'timeStyle': 'full'});
+    return '<table class="ga4gh_expert">' +
+    // '<tr><th>type</th><td>'+visa.ga4gh_visa_v1.type+'</td></tr>' +
+    '<tr><th>value</th><td>'+visa.ga4gh_visa_v1.value+'</td></tr>' +
+    '<tr><th>source</th><td>'+visa.ga4gh_visa_v1.source+'</td></tr>' +
+    '<tr><th>by</th><td>'+visa.ga4gh_visa_v1.by+'</td></tr>' +
+    '<tr><th>conditions</th><td>'+(visa.ga4gh_visa_v1.conditions ? visa.ga4gh_visa_v1.conditions : '')+'</td></tr>' +
+    '<tr><th>issuer (iss)</th><td>'+visa.iss+' ('+ISSUERS[visa.iss]+')</td></tr>' +
+    '<tr><th>subject (sub)</th><td>'+visa.sub+'</td></tr>' +
+    '<tr><th>asserted at</th><td>'+visa.ga4gh_visa_v1.asserted+' ('+timeFormat.format(new Date(visa.ga4gh_visa_v1.asserted*1000))+')</td></tr>' +
+    '<tr><th>issued at (iat)</th><td>'+visa.iat+' ('+timeFormat.format(new Date(visa.iat*1000))+')</td></tr>' +
+    '<tr><th>expires at (exp)</th><td>'+visa.exp+' ('+timeFormat.format(new Date(visa.exp*1000))+')</td></tr>' +
+    '<tr><th>JWT id (jti)</th><td>'+visa.jti+'</td></tr>' +
+    '<tr><th>signature</th><td>jku: '+visaInfo.header.jku+' kid: '+visaInfo.header.kid+' ('+SIGNERS[visaInfo.header.jku]+')</td></tr>' +
+    '</table>';
+}
 
 mgr.getUser().then(function (user) {
     if (user) {
@@ -39,32 +63,142 @@ mgr.getUser().then(function (user) {
         document.getElementById("locale").innerHTML = user.profile.locale;
         document.getElementById("zoneinfo").innerHTML = user.profile.zoneinfo;
 
+        document.getElementById("basic_id").innerHTML = user.profile.sub;
+
         // GA4GH passport
-        const ga4gh_jwts = user.profile.ga4gh_passport_v1;
-        const ga4gh_tokens = ga4gh_jwts.map( j => { let jwt = j.split('.'); return JSON.parse(atob(jwt[1])); } );
-        rawlog('raw_passport',ga4gh_tokens);
         const ga4gh_table = document.getElementById("ga4gh_table");
-        for(const visa of ga4gh_tokens) {
-          let row = ga4gh_table.insertRow(-1); 
-          row.insertCell(0).innerHTML = '<b>'+visa.ga4gh_visa_v1.type+'</b>';
-          if(visa.ga4gh_visa_v1.type == 'LinkedIdentities') {
-            let s = '<span class="small">{ '+visa.sub+', <br> '+visa.iss+' }';
-            for(li of visa.ga4gh_visa_v1.value.split(';').map(pair => pair.split(','))) {
-              s += '<br> = <br> { '+decodeURIComponent(li[0])+',<br> '+decodeURIComponent(li[1])+' }' ;
+        // basic
+        const linked_ids = new Map();
+        const affiliations = new Set();
+        const policies = new Set();
+        const statuses = new Set();
+        const accesses = new Map();
+
+        // expert
+        const linkedIdentities = [];
+        const affiliationAndRole = [];
+        const acceptedTermsAndPolicies = [];
+        const researcherStatus = [];
+        const controlledAccessGrants = [];
+        for(const jwt of user.profile.ga4gh_passport_v1) {
+            const jwt_parts = jwt.split('.');
+            const header = JSON.parse(atob(jwt_parts[0]));
+            const visa = JSON.parse(atob(jwt_parts[1]));
+            // process visa for expert view
+            const visaInfo = {};
+            visaInfo.header = header;
+            visaInfo.visa = visa;
+            visaInfo.jwt = jwt;
+            switch (visa.ga4gh_visa_v1.type) {
+                case 'LinkedIdentities':
+                    linkedIdentities.push(visaInfo);
+                    break;
+                case 'AffiliationAndRole':
+                    affiliationAndRole.push(visaInfo);
+                    break;
+                case 'AcceptedTermsAndPolicies':
+                    acceptedTermsAndPolicies.push(visaInfo);
+                    break;
+                case 'ResearcherStatus':
+                    researcherStatus.push(visaInfo);
+                    break;
+                case 'ControlledAccessGrants':
+                    controlledAccessGrants.push(visaInfo);
+                    break;
             }
-            s += '</span>'
-            row.insertCell(1).innerHTML = s;
-          } else if(visa.ga4gh_visa_v1.value.length > 70 ) {
-            row.insertCell(1).innerHTML = '<span class="tiny">'+visa.ga4gh_visa_v1.value+'</span>';
-          } else if(visa.ga4gh_visa_v1.value.length > 30 ) {
-            row.insertCell(1).innerHTML = '<span class="small">'+visa.ga4gh_visa_v1.value+'</span>';
-          } else {
-            row.insertCell(1).innerHTML = visa.ga4gh_visa_v1.value;
-          }
-          row.insertCell(2).innerHTML = visa.ga4gh_visa_v1.by;
-          row.insertCell(3).innerHTML = '<span class="small"><a href="' + visa.ga4gh_visa_v1.source + '">' + visa.ga4gh_visa_v1.source + '</a><br>'+visa.iss+'</span>';
-          row.insertCell(4).innerHTML = new Date(visa.ga4gh_visa_v1.asserted*1000).toISOString().substring(0, 10);
-          row.insertCell(5).innerHTML = new Date(visa.exp*1000).toISOString().substring(0, 10);
+            // process visa for basic view
+            switch (visa.ga4gh_visa_v1.type) {
+                case 'LinkedIdentities':
+                    if (visa.sub === user.profile.sub && visa.iss === config.authority ) {
+                        // issued by elixir aai
+                        for(const lid of visa.ga4gh_visa_v1.value.split(';').map(pair => pair.split(','))) {
+                            let linkedId = {};
+                            linkedId.sub = decodeURIComponent(lid[0]); // linked sub
+                            linkedId.iss = decodeURIComponent(lid[1]); // linked iss - issued the JWT
+                            linkedId.source = visa.ga4gh_visa_v1.source; // linked source - collected the info
+                            linkedId.key = linkedId.sub + linkedId.iss;
+                            linked_ids.set(linkedId.key,linkedId);
+                        }
+                    } else {
+                        let linkedId = {};
+                        linkedId.sub = visa.sub;
+                        linkedId.iss = visa.iss;
+                        linkedId.source = visa.ga4gh_visa_v1.source;
+                        linkedId.key = linkedId.sub + linkedId.iss;
+                        for(const lid of visa.ga4gh_visa_v1.value.split(';').map(pair => pair.split(','))) {
+                            let lidsub = decodeURIComponent(lid[0]);
+                            let lidiss = decodeURIComponent(lid[1]);
+                            if ( lidsub === user.profile.sub && lidiss === config.authority ) {
+                                linked_ids.set(linkedId.key,linkedId);
+                            }
+                        }
+                    }
+                    break;
+
+                case 'AffiliationAndRole':
+                    affiliations.add(visa.ga4gh_visa_v1.value);
+                    break;
+
+                case 'AcceptedTermsAndPolicies':
+                    policies.add(visa.ga4gh_visa_v1.value);
+                    break;
+
+                case 'ResearcherStatus':
+                    statuses.add(visa.ga4gh_visa_v1.value);
+                    break;
+
+                case 'ControlledAccessGrants':
+                    let access = {};
+                    access.dataset = visa.ga4gh_visa_v1.value;
+                    access.iss = visa.iss;
+                    access.key = access.dataset + access.iss;
+                    accesses.set(access.key, access);
+                    break;
+            }
+        }
+
+        //expert view
+        for(let visaInfo of linkedIdentities) {
+            document.getElementById("linked_identities_tables").innerHTML +=  expert_table(visaInfo);
+        }
+
+        for(let visaInfo of affiliationAndRole) {
+            document.getElementById("affiliation_tables").innerHTML +=  expert_table(visaInfo);
+        }
+
+        for(let visaInfo of acceptedTermsAndPolicies) {
+            document.getElementById("policies_tables").innerHTML +=  expert_table(visaInfo);
+        }
+
+        for(let visaInfo of researcherStatus) {
+            document.getElementById("status_tables").innerHTML +=  expert_table(visaInfo);
+        }
+
+        for(let visaInfo of controlledAccessGrants) {
+            document.getElementById("access_tables").innerHTML +=  expert_table(visaInfo);
+        }
+
+        // basic view linked identities
+        for(let linkedId of linked_ids.values()) {
+            document.getElementById("basic_linked_ids").innerHTML +=
+                ISSUERS[linkedId.iss] + ': ' + linkedId.sub +'<br>';
+        }
+        // affiliations
+        for(let aff of affiliations.values()) {
+            document.getElementById("basic_affiliations").innerHTML += aff + '<br>';
+        }
+        // policies
+        for(let policy of policies.values()) {
+            document.getElementById("basic_policies").innerHTML += POLICIES[policy] + '<br>';
+        }
+        // statuses
+        for(let status of statuses.values()) {
+            document.getElementById("basic_statuses").innerHTML += STATUSES[status] + '<br>';
+        }
+        // accesses
+        for(let access of accesses.values()) {
+            document.getElementById("basic_accesses").innerHTML +=
+                ISSUERS[access.iss] + ': ' + access.dataset +'<br>';
         }
 
         // access token

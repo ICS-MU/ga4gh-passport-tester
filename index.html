@@ -1,58 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>ELIXIR GA4GH Echo service</title>
+    <title>ELIXIR GA4GH Passport Tester</title>
     <link rel="stylesheet" type="text/css" href="index.css" />
 </head>
 <body>
-  <img id="logo" src="elixir-aai.png" width="300" title="ELIXIR AAI"/> 
-  <h1>ELIXIR GA4GH Echo service</h1>
+  <!--suppress CheckImageSize -->
+  <img id="logo" src="elixir-aai.png" width="300" title="ELIXIR AAI" alt="ELIXIR AAI logo"/>
+  <h1>ELIXIR GA4GH Passport Tester</h1>
   <p>(c) 2020 Masaryk University of Brno</p>
   <div id="div_no_login">
     Please log in:
-    <button id="login">Login</button>
+    <button id="login"><img src="login-button-orange-small.png" alt="Login"/></button>
   </div>
   <div id="div_login">
-    <!--<button id="logout">Logout</button>-->
-    <h2>User:</h2>
-    <table class="userdata">
-     <tr> <th>ELIXIR id:</th> <td id="sub"></td> </tr>
-     <tr> <th>given name:</th> <td id="given_name"></td> </tr>
-     <tr> <th>family name:</th> <td id="family_name"></td> </tr>
-     <tr> <th>name:</th> <td id="name"></td> </tr>
-     <tr> <th>preferred_username:</th> <td id="preferred_username"></td> </tr>
-     <tr> <th>email:</th> <td id="email"></td> </tr>
-     <tr> <th>locale:</th> <td id="locale"></td> </tr>
-     <tr> <th>zoneinfo:</th> <td id="zoneinfo"></td> </tr>
+    <button id="logout">Logout</button>
+      <h2>Your user info:</h2>
+        <table class="userdata">
+          <tr> <th>ELIXIR id:</th> <td id="sub"></td> </tr>
+          <tr> <th>name:</th> <td id="name"></td> </tr>
+          <tr> <th>given name:</th> <td id="given_name"></td> </tr>
+          <tr> <th>family name:</th> <td id="family_name"></td> </tr>
+          <tr> <th>preferred username:</th> <td id="preferred_username"></td> </tr>
+          <tr> <th>email:</th> <td id="email"></td> </tr>
+          <tr> <th>locale:</th> <td id="locale"></td> </tr>
+          <tr> <th>zoneinfo:</th> <td id="zoneinfo"></td> </tr>
+        </table>
+
+    <h2>Your GA4GH Passport:</h2>
+
+    <h3>Basic view</h3>
+
+    <table class="ga4gh_basic" id="ga4gh_table_basic">
+      <tr><th>Your ID:</th><td id="basic_id"></td></tr>
+      <tr><th>You are also known as:</th><td id="basic_linked_ids"></td></tr>
+      <tr><th>Your Affiliations and roles:</th><td id="basic_affiliations"></td></tr>
+      <tr><th>Terms and policies you have committed to:</th><td id="basic_policies"></td></tr>
+      <tr><th>Your registered status as a researcher:</th><td id="basic_statuses"></td></tr>
+      <tr><th>Controlled Access data objects you have a permission to access:</th><td id="basic_accesses"></td></tr>
     </table>
-    <h2>GA4GH Passport:</h2>
-    <table class="ga4gh" id="ga4gh_table">
-      <thead>
-        <tr>
-         <th>type</th>
-         <th>value</th>
-         <th>by</th>
-         <th>source / issuer</th>
-         <th>asserted</th>
-         <th>expires</th>
-    </table>
-    <h2>GA4GH Passport raw values:</h2>
+
+    <h3>Expert view</h3>
+
+    <h4>LinkedIdentities Visas</h4>
+    <div id="linked_identities_tables"></div>
+
+    <h4>AffiliationAndRole Visas</h4>
+    <div id="affiliation_tables"></div>
+
+    <h4>AcceptedTermsAndPolicies Visas</h4>
+    <div id="policies_tables"></div>
+
+    <h4>ResearcherStatus Visas</h4>
+    <div id="status_tables"></div>
+
+    <h4>ControlledAccessGrants Visas</h4>
+    <div id="access_tables"></div>
+
+    <h4>GA4GH Passport raw values:</h4>
      <pre id="raw_passport"></pre>
-    <h2>Access token:</h2>
+
+    <h4>Access token:</h4>
      <table class="userdata">
        <tr> <th>iat:</th> <td id="access_token_iat"></td> </tr>
        <tr> <th>exp:</th> <td id="access_token_exp"></td> </tr>
      </table>
      <pre id="raw_access_token"></pre>
-    <h2>Id token:</h2>
+
+    <h4>Id token:</h4>
      <table class="userdata">
        <tr> <th>auth_time:</th> <td id="id_token_auth_time"></td> </tr>
        <tr> <th>iat:</th> <td id="id_token_iat"></td> </tr>
        <tr> <th>exp:</th> <td id="id_token_exp"></td> </tr>
      </table>
      <pre id="raw_id_token"></pre>
-    <h2>UserInfo:</h2>
+
+    <h4>UserInfo:</h4>
      <pre id="raw_userinfo"></pre>
   </div>
 
