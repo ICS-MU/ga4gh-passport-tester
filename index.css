@@ -1,0 +1,24 @@
+#logo {
+ position: absolute;
+ top: 0;
+ right: 0;
+}
+table.userdata { border-collapse: collapse; }
+table.userdata td, table.userdata th {
+  border: 1px solid #AAAAAA;
+}
+
+table.ga4gh { border-collapse: collapse; }
+table.ga4gh td, table.ga4gh th {
+  border: 1px solid #AAAAAA;
+  padding: 3px 2px;
+}
+table.ga4gh tr:nth-child(even) {
+  background: #D0E4F5;
+}
+table.ga4gh thead th {
+  background: #7C88DD;
+}
+
+span.small { font-size: 0.8em; } 
+span.tiny { font-size: 0.5em; } 

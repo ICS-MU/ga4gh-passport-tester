@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ELIXIR GA4GH Echo service</title>
+    <link rel="stylesheet" type="text/css" href="index.css" />
+</head>
+<body>
+  <img id="logo" src="elixir-aai.png" width="300" title="ELIXIR AAI"/> 
+  <h1>ELIXIR GA4GH Echo service</h1>
+  <p>(c) 2020 Masaryk University of Brno</p>
+  <div id="div_no_login">
+    Please log in:
+    <button id="login">Login</button>
+  </div>
+  <div id="div_login">
+    <!--<button id="logout">Logout</button>-->
+    <h2>User:</h2>
+    <table class="userdata">
+     <tr> <th>ELIXIR id:</th> <td id="sub"></td> </tr>
+     <tr> <th>given name:</th> <td id="given_name"></td> </tr>
+     <tr> <th>family name:</th> <td id="family_name"></td> </tr>
+     <tr> <th>name:</th> <td id="name"></td> </tr>
+     <tr> <th>preferred_username:</th> <td id="preferred_username"></td> </tr>
+     <tr> <th>email:</th> <td id="email"></td> </tr>
+     <tr> <th>locale:</th> <td id="locale"></td> </tr>
+     <tr> <th>zoneinfo:</th> <td id="zoneinfo"></td> </tr>
+    </table>
+    <h2>GA4GH Passport:</h2>
+    <table class="ga4gh" id="ga4gh_table">
+      <thead>
+        <tr>
+         <th>type</th>
+         <th>value</th>
+         <th>by</th>
+         <th>source / issuer</th>
+         <th>asserted</th>
+         <th>expires</th>
+    </table>
+    <h2>GA4GH Passport raw values:</h2>
+     <pre id="raw_passport"></pre>
+    <h2>Access token:</h2>
+     <table class="userdata">
+       <tr> <th>iat:</th> <td id="access_token_iat"></td> </tr>
+       <tr> <th>exp:</th> <td id="access_token_exp"></td> </tr>
+     </table>
+     <pre id="raw_access_token"></pre>
+    <h2>Id token:</h2>
+     <table class="userdata">
+       <tr> <th>auth_time:</th> <td id="id_token_auth_time"></td> </tr>
+       <tr> <th>iat:</th> <td id="id_token_iat"></td> </tr>
+       <tr> <th>exp:</th> <td id="id_token_exp"></td> </tr>
+     </table>
+     <pre id="raw_id_token"></pre>
+    <h2>UserInfo:</h2>
+     <pre id="raw_userinfo"></pre>
+  </div>
+
+  <script src="oidc-client-js-1.10.1/dist/oidc-client.min.js"></script>
+  <script src="config.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
+
