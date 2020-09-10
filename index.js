@@ -61,6 +61,10 @@ mgr.getUser().then(function (user) {
                 jwt: jwt
             };
             const timeFormat = new Intl.DateTimeFormat('en-GB', { 'dateStyle': 'full', 'timeStyle': 'full'});
+            const now = new Date();
+            const iat = new Date(visa.iat * 1000);
+            const exp = new Date(visa.exp * 1000);
+            const asserted = new Date(visa.ga4gh_visa_v1.asserted * 1000);
             document.getElementById(visaInfo.visa.ga4gh_visa_v1.type).innerHTML +=
                 '<table class="ga4gh_expert" id="tab'+tablecounter+'">' +
                 '<tr><th>value</th><td>' + visa.ga4gh_visa_v1.value + '</td></tr>' +
@@ -69,9 +73,9 @@ mgr.getUser().then(function (user) {
                 '<tr><th>conditions</th><td>' + (visa.ga4gh_visa_v1.conditions ? visa.ga4gh_visa_v1.conditions : '') + '</td></tr>' +
                 '<tr><th>issuer (iss)</th><td>' + visa.iss + ' (' + ISSUERS[visa.iss] + ')</td></tr>' +
                 '<tr><th>subject (sub)</th><td>' + visa.sub + '</td></tr>' +
-                '<tr><th>asserted at</th><td>' + visa.ga4gh_visa_v1.asserted + ' (' + timeFormat.format(new Date(visa.ga4gh_visa_v1.asserted * 1000)) + ')</td></tr>' +
-                '<tr><th>issued at (iat)</th><td>' + visa.iat + ' (' + timeFormat.format(new Date(visa.iat * 1000)) + ')</td></tr>' +
-                '<tr><th>expires at (exp)</th><td>' + visa.exp + ' (' + timeFormat.format(new Date(visa.exp * 1000)) + ')</td></tr>' +
+                '<tr><th>asserted at</th><td>' + visa.ga4gh_visa_v1.asserted + ' (' + timeFormat.format(asserted) + ')</td></tr>' +
+                '<tr><th>issued at (iat)</th><td '+(iat>now?'class="warning"':'')+'>' + visa.iat + ' (' + timeFormat.format(iat) + ')'+(iat>now?' issued in the future ':'')+'</td></tr>' +
+                '<tr><th>expires at (exp)</th><td '+(exp<now?'class="warning"':'')+'>' + visa.exp + ' (' + timeFormat.format(exp) + ')'+(exp<now?' visa expired ':'')+'</td></tr>' +
                 '<tr><th>JWT id (jti)</th><td>' + visa.jti + '</td></tr>' +
                 '<tr><th>signature</th><td>jku: ' + visaInfo.header.jku + ' kid: ' + visaInfo.header.kid + ' (' + SIGNERS[visaInfo.header.jku] + ')</td></tr>' +
                 '<tr><td colspan="2" class="rawjwt">'+

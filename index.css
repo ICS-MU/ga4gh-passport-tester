@@ -6,6 +6,10 @@
     width: 300px;
 }
 
+/* warning */
+.warning {
+    color: red;
+}
 /* userdata table */
 table.userdata {
     border-collapse: collapse;
