@@ -46,7 +46,7 @@ mgr.getUser().then(function (user) {
         const policies = new Set();
         const statuses = new Set();
         const accesses = new Map();
-        let tablecounter = -1;
+        let tablecounter = 0;
 
         // process all visas
         for(const jwt of user.profile.ga4gh_passport_v1) {
@@ -61,7 +61,6 @@ mgr.getUser().then(function (user) {
                 jwt: jwt
             };
             const timeFormat = new Intl.DateTimeFormat('en-GB', { 'dateStyle': 'full', 'timeStyle': 'full'});
-            tablecounter++;
             document.getElementById(visaInfo.visa.ga4gh_visa_v1.type).innerHTML +=
                 '<table class="ga4gh_expert" id="tab'+tablecounter+'">' +
                 '<tr><th>value</th><td>' + visa.ga4gh_visa_v1.value + '</td></tr>' +
@@ -81,7 +80,7 @@ mgr.getUser().then(function (user) {
                 '</td></tr>' +
                 '</table>'
             ;
-
+            tablecounter++;
 
             // process visa for basic view
             switch (visa.ga4gh_visa_v1.type) {
