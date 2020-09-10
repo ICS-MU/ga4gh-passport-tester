@@ -1,15 +1,4 @@
-function rawlog(area, msg) {
-    document.getElementById(area).innerText = '';
-    if (typeof msg !== 'string') {
-        msg = JSON.stringify(msg, null, 2);
-    }
-    document.getElementById(area).innerHTML += msg + '\r\n';
-}
 
-document.getElementById("login").addEventListener("click", login, false);
-document.getElementById("logout").addEventListener("click", logout, false);
-
-var mgr = new Oidc.UserManager(config);
 
 const ISSUERS = {
     'https://ega.ebi.ac.uk:8053/ega-openid-connect-server/': 'EGA',
@@ -29,24 +18,8 @@ const POLICIES = {
 const STATUSES = {
     'https://doi.org/10.1038/s41431-018-0219-y': 'Bona Fide researcher or registered access (<a href="https://elixir-europe.org/services/compute/aai/bonafide">link</a>)'
 }
-function expert_table(visaInfo) {
-    const visa = visaInfo.visa;
-    const timeFormat = new Intl.DateTimeFormat('en-GB', { 'dateStyle': 'full', 'timeStyle': 'full'});
-    return '<table class="ga4gh_expert">' +
-    // '<tr><th>type</th><td>'+visa.ga4gh_visa_v1.type+'</td></tr>' +
-    '<tr><th>value</th><td>'+visa.ga4gh_visa_v1.value+'</td></tr>' +
-    '<tr><th>source</th><td>'+visa.ga4gh_visa_v1.source+'</td></tr>' +
-    '<tr><th>by</th><td>'+visa.ga4gh_visa_v1.by+'</td></tr>' +
-    '<tr><th>conditions</th><td>'+(visa.ga4gh_visa_v1.conditions ? visa.ga4gh_visa_v1.conditions : '')+'</td></tr>' +
-    '<tr><th>issuer (iss)</th><td>'+visa.iss+' ('+ISSUERS[visa.iss]+')</td></tr>' +
-    '<tr><th>subject (sub)</th><td>'+visa.sub+'</td></tr>' +
-    '<tr><th>asserted at</th><td>'+visa.ga4gh_visa_v1.asserted+' ('+timeFormat.format(new Date(visa.ga4gh_visa_v1.asserted*1000))+')</td></tr>' +
-    '<tr><th>issued at (iat)</th><td>'+visa.iat+' ('+timeFormat.format(new Date(visa.iat*1000))+')</td></tr>' +
-    '<tr><th>expires at (exp)</th><td>'+visa.exp+' ('+timeFormat.format(new Date(visa.exp*1000))+')</td></tr>' +
-    '<tr><th>JWT id (jti)</th><td>'+visa.jti+'</td></tr>' +
-    '<tr><th>signature</th><td>jku: '+visaInfo.header.jku+' kid: '+visaInfo.header.kid+' ('+SIGNERS[visaInfo.header.jku]+')</td></tr>' +
-    '</table>';
-}
+
+mgr = new Oidc.UserManager(config);
 
 mgr.getUser().then(function (user) {
     if (user) {
@@ -66,46 +39,50 @@ mgr.getUser().then(function (user) {
         document.getElementById("basic_id").innerHTML = user.profile.sub;
 
         // GA4GH passport
-        const ga4gh_table = document.getElementById("ga4gh_table");
+
         // basic
         const linked_ids = new Map();
         const affiliations = new Set();
         const policies = new Set();
         const statuses = new Set();
         const accesses = new Map();
+        let tablecounter = -1;
 
-        // expert
-        const linkedIdentities = [];
-        const affiliationAndRole = [];
-        const acceptedTermsAndPolicies = [];
-        const researcherStatus = [];
-        const controlledAccessGrants = [];
+        // process all visas
         for(const jwt of user.profile.ga4gh_passport_v1) {
+            // process visa for expert view
             const jwt_parts = jwt.split('.');
             const header = JSON.parse(atob(jwt_parts[0]));
             const visa = JSON.parse(atob(jwt_parts[1]));
             // process visa for expert view
-            const visaInfo = {};
-            visaInfo.header = header;
-            visaInfo.visa = visa;
-            visaInfo.jwt = jwt;
-            switch (visa.ga4gh_visa_v1.type) {
-                case 'LinkedIdentities':
-                    linkedIdentities.push(visaInfo);
-                    break;
-                case 'AffiliationAndRole':
-                    affiliationAndRole.push(visaInfo);
-                    break;
-                case 'AcceptedTermsAndPolicies':
-                    acceptedTermsAndPolicies.push(visaInfo);
-                    break;
-                case 'ResearcherStatus':
-                    researcherStatus.push(visaInfo);
-                    break;
-                case 'ControlledAccessGrants':
-                    controlledAccessGrants.push(visaInfo);
-                    break;
-            }
+            const visaInfo = {
+                header: header,
+                visa: visa,
+                jwt: jwt
+            };
+            const timeFormat = new Intl.DateTimeFormat('en-GB', { 'dateStyle': 'full', 'timeStyle': 'full'});
+            tablecounter++;
+            document.getElementById(visaInfo.visa.ga4gh_visa_v1.type).innerHTML +=
+                '<table class="ga4gh_expert" id="tab'+tablecounter+'">' +
+                '<tr><th>value</th><td>' + visa.ga4gh_visa_v1.value + '</td></tr>' +
+                '<tr><th>source</th><td>' + visa.ga4gh_visa_v1.source + '</td></tr>' +
+                '<tr><th>by</th><td>' + visa.ga4gh_visa_v1.by + '</td></tr>' +
+                '<tr><th>conditions</th><td>' + (visa.ga4gh_visa_v1.conditions ? visa.ga4gh_visa_v1.conditions : '') + '</td></tr>' +
+                '<tr><th>issuer (iss)</th><td>' + visa.iss + ' (' + ISSUERS[visa.iss] + ')</td></tr>' +
+                '<tr><th>subject (sub)</th><td>' + visa.sub + '</td></tr>' +
+                '<tr><th>asserted at</th><td>' + visa.ga4gh_visa_v1.asserted + ' (' + timeFormat.format(new Date(visa.ga4gh_visa_v1.asserted * 1000)) + ')</td></tr>' +
+                '<tr><th>issued at (iat)</th><td>' + visa.iat + ' (' + timeFormat.format(new Date(visa.iat * 1000)) + ')</td></tr>' +
+                '<tr><th>expires at (exp)</th><td>' + visa.exp + ' (' + timeFormat.format(new Date(visa.exp * 1000)) + ')</td></tr>' +
+                '<tr><th>JWT id (jti)</th><td>' + visa.jti + '</td></tr>' +
+                '<tr><th>signature</th><td>jku: ' + visaInfo.header.jku + ' kid: ' + visaInfo.header.kid + ' (' + SIGNERS[visaInfo.header.jku] + ')</td></tr>' +
+                '<tr><td colspan="2" class="rawjwt">'+
+                '<button id="but'+tablecounter+'">Display raw decoded JWT</button>' +
+                '<pre id="pre'+tablecounter+'">'+ JSON.stringify(visaInfo.header, null, 2) +'<br>.<br>' +  JSON.stringify(visaInfo.visa, null, 2) + '</pre>' +
+                '</td></tr>' +
+                '</table>'
+            ;
+
+
             // process visa for basic view
             switch (visa.ga4gh_visa_v1.type) {
                 case 'LinkedIdentities':
@@ -157,25 +134,12 @@ mgr.getUser().then(function (user) {
             }
         }
 
-        //expert view
-        for(let visaInfo of linkedIdentities) {
-            document.getElementById("linked_identities_tables").innerHTML +=  expert_table(visaInfo);
-        }
-
-        for(let visaInfo of affiliationAndRole) {
-            document.getElementById("affiliation_tables").innerHTML +=  expert_table(visaInfo);
-        }
-
-        for(let visaInfo of acceptedTermsAndPolicies) {
-            document.getElementById("policies_tables").innerHTML +=  expert_table(visaInfo);
-        }
-
-        for(let visaInfo of researcherStatus) {
-            document.getElementById("status_tables").innerHTML +=  expert_table(visaInfo);
-        }
-
-        for(let visaInfo of controlledAccessGrants) {
-            document.getElementById("access_tables").innerHTML +=  expert_table(visaInfo);
+        // event for displaying raw JWTs
+        for (let i = 0; i < tablecounter; i++) {
+            document.getElementById("but" + i).addEventListener('click', () => {
+                document.getElementById("but"+i).style.display = "none";
+                document.getElementById("pre"+i).style.display = "block";
+            });
         }
 
         // basic view linked identities
@@ -233,3 +197,18 @@ function login() {
 function logout() {
     mgr.signoutRedirect();
 }
+
+document.getElementById("login").addEventListener("click", login, false);
+document.getElementById("logout").addEventListener("click", logout, false);
+
+
+function rawlog(area, msg) {
+    document.getElementById(area).innerText = '';
+    if (typeof msg !== 'string') {
+        msg = JSON.stringify(msg, null, 2);
+    }
+    document.getElementById(area).innerHTML += msg + '\r\n';
+}
+
+
+
