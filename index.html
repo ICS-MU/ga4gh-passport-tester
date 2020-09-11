@@ -58,15 +58,12 @@
     <h4>ControlledAccessGrants Visas</h4>
     <div id="ControlledAccessGrants"></div>
 
-    <h4>GA4GH Passport raw values:</h4>
-     <pre id="raw_passport"></pre>
-
     <h4>Access token:</h4>
      <table class="userdata">
        <tr> <th>iat:</th> <td id="access_token_iat"></td> </tr>
        <tr> <th>exp:</th> <td id="access_token_exp"></td> </tr>
      </table>
-     <pre id="raw_access_token"></pre>
+     <pre id="raw_access_token" class="rawjwt"></pre>
 
     <h4>Id token:</h4>
      <table class="userdata">
@@ -74,10 +71,10 @@
        <tr> <th>iat:</th> <td id="id_token_iat"></td> </tr>
        <tr> <th>exp:</th> <td id="id_token_exp"></td> </tr>
      </table>
-     <pre id="raw_id_token"></pre>
+     <pre id="raw_id_token" class="rawjwt"></pre>
 
     <h4>UserInfo:</h4>
-     <pre id="raw_userinfo"></pre>
+     <pre id="raw_userinfo" class="rawjwt"></pre>
   </div>
 
   <script src="oidc-client-js-1.10.1/dist/oidc-client.js"></script>

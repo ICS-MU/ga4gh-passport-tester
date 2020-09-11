@@ -18,6 +18,7 @@ const POLICIES = {
 const STATUSES = {
     'https://doi.org/10.1038/s41431-018-0219-y': 'Bona Fide researcher or registered access (<a href="https://elixir-europe.org/services/compute/aai/bonafide">link</a>)'
 }
+const timeFormat = new Intl.DateTimeFormat('en-GB', { 'dateStyle': 'full', 'timeStyle': 'full'});
 
 mgr = new Oidc.UserManager(config);
 
@@ -60,11 +61,17 @@ mgr.getUser().then(function (user) {
                 visa: visa,
                 jwt: jwt
             };
-            const timeFormat = new Intl.DateTimeFormat('en-GB', { 'dateStyle': 'full', 'timeStyle': 'full'});
+
             const now = new Date();
             const iat = new Date(visa.iat * 1000);
             const exp = new Date(visa.exp * 1000);
             const asserted = new Date(visa.ga4gh_visa_v1.asserted * 1000);
+            // fetch(header.jku)
+            //     .then(res => res.json())
+            //     .then((out) => {
+            //         console.log('Output: ', out);
+            //     }).catch(err => console.error(err));
+            // KJUR.jws.JWS.verifyJWT(jwt, )
             document.getElementById(visaInfo.visa.ga4gh_visa_v1.type).innerHTML +=
                 '<table class="ga4gh_expert" id="tab'+tablecounter+'">' +
                 '<tr><th>value</th><td>' + visa.ga4gh_visa_v1.value + '</td></tr>' +
@@ -172,16 +179,16 @@ mgr.getUser().then(function (user) {
         let jwtac = user.access_token.split('.');
         let access_token_load = JSON.parse(atob(jwtac[1]));
         rawlog('raw_access_token',access_token_load);
-        document.getElementById("access_token_iat").innerHTML = new Date(access_token_load.iat*1000).toISOString();
-        document.getElementById("access_token_exp").innerHTML = new Date(access_token_load.exp*1000).toISOString();
+        document.getElementById("access_token_iat").innerHTML = timeFormat.format(new Date(access_token_load.iat*1000));
+        document.getElementById("access_token_exp").innerHTML = timeFormat.format(new Date(access_token_load.exp*1000));
 
         // id token
         let jwtid = user.id_token.split('.');
         let id_token_load = JSON.parse(atob(jwtid[1])); 
         rawlog('raw_id_token',id_token_load);
-        document.getElementById("id_token_auth_time").innerHTML = new Date(id_token_load.auth_time*1000).toISOString();
-        document.getElementById("id_token_iat").innerHTML = new Date(id_token_load.iat*1000).toISOString();
-        document.getElementById("id_token_exp").innerHTML = new Date(id_token_load.exp*1000).toISOString();
+        document.getElementById("id_token_auth_time").innerHTML = timeFormat.format(new Date(id_token_load.auth_time*1000));
+        document.getElementById("id_token_iat").innerHTML = timeFormat.format(new Date(id_token_load.iat*1000));
+        document.getElementById("id_token_exp").innerHTML = timeFormat.format(new Date(id_token_load.exp*1000));
 
         // user info
         rawlog('raw_userinfo',user.profile);
