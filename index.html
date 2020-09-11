@@ -30,7 +30,7 @@
         </table>
 
     <h2>Your GA4GH Passport:</h2>
-
+    <div id="basic_view">
     <h3>Basic view</h3>
 
     <table class="ga4gh_basic" id="ga4gh_table_basic">
@@ -42,6 +42,9 @@
       <tr><th>Controlled Access data objects you have a permission to access:</th><td id="basic_accesses"></td></tr>
     </table>
 
+    <button id="expert_button">Switch to expert view</button>
+    </div>
+    <div id="expert_view">
     <h3>Expert view</h3>
 
     <h4>LinkedIdentities Visas</h4>
@@ -76,6 +79,7 @@
 
     <h4>UserInfo:</h4>
      <pre id="raw_userinfo" class="rawjwt"></pre>
+    </div>
   </div>
 
   <script src="oidc-client-js-1.10.1/dist/oidc-client.js"></script>

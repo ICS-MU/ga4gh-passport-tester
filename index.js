@@ -1,5 +1,4 @@
 
-
 const ISSUERS = {
     'https://ega.ebi.ac.uk:8053/ega-openid-connect-server/': 'EGA',
     'https://jwt-elixir-rems-proxy.rahtiapp.fi/':'REMS',
@@ -64,13 +63,21 @@ const STATUSES = {
 const timeFormat = new Intl.DateTimeFormat('en-GB', { 'dateStyle': 'full', 'timeStyle': 'full'});
 
 mgr = new Oidc.UserManager(config);
-
+expert = new URLSearchParams(window.location.search).has('expert');
 mgr.getUser().then(function (user) {
     if (user) {
         console.log(user);
-        // user
+
         document.getElementById("div_login").style.display = "block";
         document.getElementById("div_no_login").style.display = "none";
+        if (expert) {
+            document.getElementById("basic_view").style.display = "none";
+            document.getElementById("expert_view").style.display = "block";
+        } else {
+            document.getElementById("basic_view").style.display = "block";
+            document.getElementById("expert_view").style.display = "none";
+        }
+
         document.getElementById("sub").innerHTML = user.profile.sub;
         document.getElementById("name").innerHTML = user.profile.name;
         document.getElementById("given_name").innerHTML = user.profile.given_name;
@@ -113,7 +120,6 @@ mgr.getUser().then(function (user) {
             // verify signature (at the time of issuance, otherwise expired tokens would be marked as invalid signatures)
             const signer_key = KEYUTIL.getKey(SIGNERS[visaInfo.header.jku].jwks.keys.filter(key => key.kid === visaInfo.header.kid)[0]);
             const verified = KJUR.jws.JWS.verifyJWT(jwt, signer_key, { alg: ['RS256'], verifyAt: visaInfo.visa.iat });
-            console.log(verified,tablecounter);
 
             document.getElementById(visaInfo.visa.ga4gh_visa_v1.type).innerHTML +=
                 '<table class="ga4gh_expert" id="tab'+tablecounter+'">' +
@@ -199,7 +205,7 @@ mgr.getUser().then(function (user) {
         // basic view linked identities
         for(let linkedId of linked_ids.values()) {
             document.getElementById("basic_linked_ids").innerHTML +=
-                ISSUERS[linkedId.iss] + ': ' + linkedId.sub +'<br>';
+                "in "+ ISSUERS[linkedId.iss] + ': ' + linkedId.sub +'<br>';
         }
         // affiliations
         for(let aff of affiliations.values()) {
@@ -253,10 +259,14 @@ function relogin() {
 function logout() {
     mgr.signoutRedirect();
 }
-
+function expert_button() {
+    expert = true;
+    location.assign(window.location.pathname+ "?expert");
+}
 document.getElementById("login").addEventListener("click", login, false);
 document.getElementById("relogin").addEventListener("click", relogin, false);
 document.getElementById("logout").addEventListener("click", logout, false);
+document.getElementById("expert_button").addEventListener("click", expert_button, false);
 
 
 function rawlog(area, msg) {
