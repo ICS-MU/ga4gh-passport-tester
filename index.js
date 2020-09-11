@@ -7,10 +7,53 @@ const ISSUERS = {
     'https://login.elixir-czech.org/oidc/': 'ELIXIR'
 };
 const SIGNERS = {
-    'https://ega.ebi.ac.uk:8053/ega-openid-connect-server/jwk': 'EGA',
-    'https://jwt-elixir-rems-proxy.rahtiapp.fi/jwks.json' : 'REMS',
-    'https://permissions-sds.rahtiapp.fi/jwks.json': 'REMS-SDS',
-    'https://login.elixir-czech.org/oidc/jwk': 'ELIXIR',
+    'https://ega.ebi.ac.uk:8053/ega-openid-connect-server/jwk': {
+        name: 'EGA',
+        jwks: {
+            "keys": [{
+                "kty": "RSA",
+                "e": "AQAB",
+                "kid": "rsa1",
+                "n": "mr1sx838c1_easpPHIiFquOxye6imbA3eid7TD8DDYJRNPsFcZNuhNmu5BC8sfyKhGEdkQxIgxPZVHaD3PW1YJsOIe33ZYJHkVbGOG8rPNmspdgXLzymxT9yK77oLOhK18BRGZsVT689_lFCixyQTqNDCPh9pz6etWJWtWVu4P8"
+            }]
+        }
+    },
+    'https://jwt-elixir-rems-proxy.rahtiapp.fi/jwks.json' : {
+        name: 'REMS',
+        jwks: {
+            "keys": [{
+                "kty": "RSA",
+                "e": "AQAB",
+                "kid": "7b795308",
+                "n": "pYlDjYIje--qQsDabBmbEkrAur-UEiAZf8f42esrQeA-R99SNQacJKchbOTYO2ySLPFpvwqNLGaBx8su7LoXS72DL-ALs85i2K45xjS4dJ-jxNag3P0SGUYZOdYuzTX5gkPI0JRZBzeE6Yo2uK-APdTeCvE9cGqtuf0XVI12lk3052rQpoN0NuLndCECNZxFDzZYugqAvkNCWlVQ15trcPAoMKX6e06npz-EbysMt2L4ErZx4wUiLHK_U1D_-lHwR3UfLKbw6BwchOu9AuFhT-kqVXvJe69r1E4rZrNgs-gsjCdP325j3m07mcgWrvkWn9Fbvuj3iyu_RY6Dbotmrw",
+                "alg": "RS256"
+            }]
+        }
+    },
+    'https://permissions-sds.rahtiapp.fi/jwks.json':  {
+        name: 'REMS-SDS',
+        jwks: {
+            "keys": [{
+                "kty": "RSA",
+                "e": "AQAB",
+                "kid": "fa67eeda",
+                "n": "7GYzx70RO-X9bqxKV8Fqd0Qw--goVNrSLW7v1pNy6fwwahMnrrXdb_GYdfP45NEgKlIqhzvYvGwWP63W2sdLNocf9GeGvmb2JgLYIG414OCSR9GgwAlxjALnrUCUT70j0U2SNANuZWrgpQAZzmfyo-NVE9ryX90SBdjIYgAb4hwrWnVOiPSkF7ihr0GV712JkBSF72GFx0GTj2qrl_soH9vLGXGkPj5byjoJZ9X8wsswgBDQB8ngJyM2m9NEUWqTyTfX2ZL6kz5ml0T4SHX_VLGcTNMypQjtOOW6Pmo5AmNVYznPKWxV8TKi96wsVHRXbffyAi2KwSvhQfKDhCr6uQ",
+                "alg": "RS256"
+            }]
+        }
+    },
+    'https://login.elixir-czech.org/oidc/jwk': {
+        name: 'ELIXIR',
+        jwks: {
+            "keys": [{
+                "kty": "RSA",
+                "e": "AQAB",
+                "kid": "rsa1",
+                "n": "uVHPfUHVEzpgOnDNi3e2pVsbK1hsINsTy_1mMT7sxDyP-1eQSjzYsGSUJ3GHq9LhiVndpwV8y7Enjdj0purywtwk_D8z9IIN36RJAh1yhFfbyhLPEZlCDdzxas5Dku9k0GrxQuV6i30Mid8OgRQ2q3pmsks414Afy6xugC6u3inyjLzLPrhR0oRPTGdNMXJbGw4sVTjnh5AzTgX-GrQWBHSjI7rMTcvqbbl7M8OOhE3MQ_gfVLXwmwSIoKHODC0RO-XnVhqd7Qf0teS1JiILKYLl5FS_7Uy2ClVrAYd2T6X9DIr_JlpRkwSD899pq6PR9nhKguipJE0qUXxamdY9nw",
+                "alg": "RS256"
+            }]
+        }
+    },
 };
 const POLICIES = {
     'https://doi.org/10.1038/s41431-018-0219-y': 'The attestations for registered access (<a href="https://elixir-europe.org/services/compute/aai/bonafide">link</a>)'
@@ -53,8 +96,8 @@ mgr.getUser().then(function (user) {
         for(const jwt of user.profile.ga4gh_passport_v1) {
             // process visa for expert view
             const jwt_parts = jwt.split('.');
-            const header = JSON.parse(atob(jwt_parts[0]));
-            const visa = JSON.parse(atob(jwt_parts[1]));
+            const header = KJUR.jws.JWS.readSafeJSONString(b64utoutf8(jwt_parts[0]));
+            const visa = KJUR.jws.JWS.readSafeJSONString(b64utoutf8(jwt_parts[1]));
             // process visa for expert view
             const visaInfo = {
                 header: header,
@@ -66,12 +109,12 @@ mgr.getUser().then(function (user) {
             const iat = new Date(visa.iat * 1000);
             const exp = new Date(visa.exp * 1000);
             const asserted = new Date(visa.ga4gh_visa_v1.asserted * 1000);
-            // fetch(header.jku)
-            //     .then(res => res.json())
-            //     .then((out) => {
-            //         console.log('Output: ', out);
-            //     }).catch(err => console.error(err));
-            // KJUR.jws.JWS.verifyJWT(jwt, )
+
+            // verify signature (at the time of issuance, otherwise expired tokens would be marked as invalid signatures)
+            const signer_key = KEYUTIL.getKey(SIGNERS[visaInfo.header.jku].jwks.keys.filter(key => key.kid === visaInfo.header.kid)[0]);
+            const verified = KJUR.jws.JWS.verifyJWT(jwt, signer_key, { alg: ['RS256'], verifyAt: visaInfo.visa.iat });
+            console.log(verified,tablecounter);
+
             document.getElementById(visaInfo.visa.ga4gh_visa_v1.type).innerHTML +=
                 '<table class="ga4gh_expert" id="tab'+tablecounter+'">' +
                 '<tr><th>value</th><td>' + visa.ga4gh_visa_v1.value + '</td></tr>' +
@@ -84,7 +127,8 @@ mgr.getUser().then(function (user) {
                 '<tr><th>issued at (iat)</th><td '+(iat>now?'class="warning"':'')+'>' + visa.iat + ' (' + timeFormat.format(iat) + ')'+(iat>now?' issued in the future ':'')+'</td></tr>' +
                 '<tr><th>expires at (exp)</th><td '+(exp<now?'class="warning"':'')+'>' + visa.exp + ' (' + timeFormat.format(exp) + ')'+(exp<now?' visa expired ':'')+'</td></tr>' +
                 '<tr><th>JWT id (jti)</th><td>' + visa.jti + '</td></tr>' +
-                '<tr><th>signature</th><td>jku: ' + visaInfo.header.jku + ' kid: ' + visaInfo.header.kid + ' (' + SIGNERS[visaInfo.header.jku] + ')</td></tr>' +
+                '<tr><th>signature</th><td '+(!verified?'class="warning"':'')+'>jku: ' + visaInfo.header.jku + ' kid: ' + visaInfo.header.kid
+                + ' (' + SIGNERS[visaInfo.header.jku].name + ') '+(!verified?'invalid signature':'')+'</td></tr>' +
                 '<tr><td colspan="2" class="rawjwt">'+
                 '<button id="but'+tablecounter+'">Display raw decoded JWT</button>' +
                 '<pre id="pre'+tablecounter+'">'+ JSON.stringify(visaInfo.header, null, 2) +'<br>.<br>' +  JSON.stringify(visaInfo.visa, null, 2) + '</pre>' +
@@ -203,12 +247,15 @@ mgr.getUser().then(function (user) {
 function login() {
     mgr.signinRedirect();
 }
-
+function relogin() {
+    mgr.signinRedirect();
+}
 function logout() {
     mgr.signoutRedirect();
 }
 
 document.getElementById("login").addEventListener("click", login, false);
+document.getElementById("relogin").addEventListener("click", relogin, false);
 document.getElementById("logout").addEventListener("click", logout, false);
 
 
