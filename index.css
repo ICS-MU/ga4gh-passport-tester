@@ -10,6 +10,11 @@
 .warning {
     color: red;
 }
+
+/* ok */
+.ok {
+    color: #3de73d;
+}
 /* userdata table */
 table.userdata {
     border-collapse: collapse;

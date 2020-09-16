@@ -58,7 +58,7 @@ const POLICIES = {
     'https://doi.org/10.1038/s41431-018-0219-y': 'The attestations for registered access (<a href="https://elixir-europe.org/services/compute/aai/bonafide">link</a>)'
 };
 const STATUSES = {
-    'https://doi.org/10.1038/s41431-018-0219-y': 'Bona Fide researcher or registered access (<a href="https://elixir-europe.org/services/compute/aai/bonafide">link</a>)'
+    'https://doi.org/10.1038/s41431-018-0219-y': 'Bona Fide researcher for registered access (<a href="https://elixir-europe.org/services/compute/aai/bonafide">link</a>)'
 }
 const timeFormat = new Intl.DateTimeFormat('en-GB', { 'dateStyle': 'full', 'timeStyle': 'full'});
 
@@ -134,7 +134,7 @@ mgr.getUser().then(function (user) {
                 '<tr><th>expires at (exp)</th><td '+(exp<now?'class="warning"':'')+'>' + visa.exp + ' (' + timeFormat.format(exp) + ')'+(exp<now?' visa expired ':'')+'</td></tr>' +
                 '<tr><th>JWT id (jti)</th><td>' + visa.jti + '</td></tr>' +
                 '<tr><th>signature</th><td '+(!verified?'class="warning"':'')+'>jku: ' + visaInfo.header.jku + ' kid: ' + visaInfo.header.kid
-                + ' (' + SIGNERS[visaInfo.header.jku].name + ') '+(!verified?'invalid signature':'')+'</td></tr>' +
+                + ' (' + SIGNERS[visaInfo.header.jku].name + ') '+(!verified?'invalid signature':'<span class="ok">verified</span>')+'</td></tr>' +
                 '<tr><td colspan="2" class="rawjwt">'+
                 '<button id="but'+tablecounter+'">Display raw decoded JWT</button>' +
                 '<pre id="pre'+tablecounter+'">'+ JSON.stringify(visaInfo.header, null, 2) +'<br>.<br>' +  JSON.stringify(visaInfo.visa, null, 2) + '</pre>' +
