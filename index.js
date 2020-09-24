@@ -1,6 +1,7 @@
 
 const ISSUERS = {
     'https://ega.ebi.ac.uk:8053/ega-openid-connect-server/': 'EGA',
+    'https://ega.ebi.ac.uk:8443/ega-openid-connect-server/': 'EGA8443',
     'https://jwt-elixir-rems-proxy.rahtiapp.fi/':'REMS',
     'https://permissions-sds.rahtiapp.fi/':'REMS-SDS',
     'https://login.elixir-czech.org/oidc/': 'ELIXIR'
@@ -8,6 +9,17 @@ const ISSUERS = {
 const SIGNERS = {
     'https://ega.ebi.ac.uk:8053/ega-openid-connect-server/jwk': {
         name: 'EGA',
+        jwks: {
+            "keys": [{
+                "kty": "RSA",
+                "e": "AQAB",
+                "kid": "rsa1",
+                "n": "mr1sx838c1_easpPHIiFquOxye6imbA3eid7TD8DDYJRNPsFcZNuhNmu5BC8sfyKhGEdkQxIgxPZVHaD3PW1YJsOIe33ZYJHkVbGOG8rPNmspdgXLzymxT9yK77oLOhK18BRGZsVT689_lFCixyQTqNDCPh9pz6etWJWtWVu4P8"
+            }]
+        }
+    },
+    'https://ega.ebi.ac.uk:8443/ega-openid-connect-server/jwk': {
+        name: 'EGA 8443',
         jwks: {
             "keys": [{
                 "kty": "RSA",
