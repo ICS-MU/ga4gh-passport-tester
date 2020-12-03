@@ -262,6 +262,11 @@ mgr.getUser().then(function (user) {
     }
 });
 
+//autologin
+if(new URLSearchParams(window.location.search).has('autologin')) {
+    mgr.signinRedirect();
+}
+
 function login() {
     mgr.signinRedirect();
 }
