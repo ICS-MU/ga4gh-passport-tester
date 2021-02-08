@@ -4,9 +4,22 @@ const ISSUERS = {
     'https://ega.ebi.ac.uk:8443/ega-openid-connect-server/': 'EGA',
     'https://jwt-elixir-rems-proxy.rahtiapp.fi/':'REMS',
     'https://permissions-sds.rahtiapp.fi/':'REMS-SDS',
+    'https://data-access.sd.csc.fi/':'REMS-SD',
     'https://login.elixir-czech.org/oidc/': 'ELIXIR'
 };
 const SIGNERS = {
+    'https://data-access.sd.csc.fi/api/jwk': {
+        name: 'REMS-SD',
+        jwks: {
+             "keys": [{
+                 "kty": "RSA",
+                 "e": "AQAB",
+                 "kid": "fa67eeda",
+                 "alg": "RS256",
+                 "n": "7GYzx70RO-X9bqxKV8Fqd0Qw--goVNrSLW7v1pNy6fwwahMnrrXdb_GYdfP45NEgKlIqhzvYvGwWP63W2sdLNocf9GeGvmb2JgLYIG414OCSR9GgwAlxjALnrUCUT70j0U2SNANuZWrgpQAZzmfyo-NVE9ryX90SBdjIYgAb4hwrWnVOiPSkF7ihr0GV712JkBSF72GFx0GTj2qrl_soH9vLGXGkPj5byjoJZ9X8wsswgBDQB8ngJyM2m9NEUWqTyTfX2ZL6kz5ml0T4SHX_VLGcTNMypQjtOOW6Pmo5AmNVYznPKWxV8TKi96wsVHRXbffyAi2KwSvhQfKDhCr6uQ"
+            }]
+        }
+    },
     'https://ega.ebi.ac.uk:8053/ega-openid-connect-server/jwk': {
         name: 'EGAtest',
         jwks: {
@@ -123,6 +136,8 @@ mgr.getUser().then(function (user) {
                 visa: visa,
                 jwt: jwt
             };
+            console.log('processing visa ... ');
+            console.log(visaInfo);
 
             const now = new Date();
             const iat = new Date(visa.iat * 1000);
