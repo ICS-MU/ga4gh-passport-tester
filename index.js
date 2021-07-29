@@ -5,7 +5,8 @@ const ISSUERS = {
     'https://jwt-elixir-rems-proxy.rahtiapp.fi/':'REMS',
     'https://permissions-sds.rahtiapp.fi/':'REMS-SDS',
     'https://data-access.sd.csc.fi/':'REMS-SD',
-    'https://login.elixir-czech.org/oidc/': 'ELIXIR'
+    'https://login.elixir-czech.org/oidc/': 'ELIXIR',
+    'https://rems-bp-demo.rahtiapp.fi/': 'REMS-BP'
 };
 const SIGNERS = {
     'https://data-access.sd.csc.fi/api/jwk': {
@@ -78,6 +79,19 @@ const SIGNERS = {
             }]
         }
     },
+    'https://rems-bp-demo.rahtiapp.fi/api/jwk': {
+        name: 'REMS-BP',
+        jwks: {
+            "keys": [{
+                "alg": "RSA-OAEP-256",
+                "n": "gzsvvjg96aaYoTwJlwXR8fxJriQ9FUHlJ0He6qiTOriF_ez2ZW0K8kydaxywK_dCnlV-pBAbGuN26Cp881S4fP0YfkVwN8pOd-AQ2XtfGBbgFzastRQhwG32Y0_mLA4vTULd5z1wptZ2rcbNn1plZedR3UbUReazAQe_f6ebkrqS8th0cQ95BG4xgB7g8epQaQ0gqLrGHsRvvjtVeI4y42R2Ptot1PfFZf1uChITJlKT0BcbjE97MznF7D4tE6rTnBnQNa2mU4i-KHhWwDjzk_6JTqUCJCNoWyKiUJLoZwhY9BdHOSGyztAyNjCkU8gC1QGvG8zEqU_-NxM9tG_Hfw",
+                "kid": "1621408035",
+                "e": "AQAB",
+                "kty": "RSA"
+             }]
+        }
+    },
+
 };
 const POLICIES = {
     'https://doi.org/10.1038/s41431-018-0219-y': 'The attestations for registered access (<a href="https://elixir-europe.org/services/compute/aai/bonafide">link</a>)'
