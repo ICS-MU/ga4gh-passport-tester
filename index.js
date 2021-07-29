@@ -7,9 +7,11 @@ const ISSUERS = {
     'https://data-access.sd.csc.fi/':'REMS-SD',
     'https://login.elixir-czech.org/oidc/': 'ELIXIR',
     'https://rems-bp-demo.rahtiapp.fi/': 'REMS-BP'
+    'https://rems-1mg.rahtiapp.fi/': 'REMS-1MG'
 };
+
 const SIGNERS = {
-    'https://data-access.sd.csc.fi/api/jwk': {
+    'https://sd-apply.csc.fi/api/jwk': {
         name: 'REMS-SD',
         jwks: {
              "keys": [{
@@ -19,6 +21,18 @@ const SIGNERS = {
                  "alg": "RS256",
                  "n": "7GYzx70RO-X9bqxKV8Fqd0Qw--goVNrSLW7v1pNy6fwwahMnrrXdb_GYdfP45NEgKlIqhzvYvGwWP63W2sdLNocf9GeGvmb2JgLYIG414OCSR9GgwAlxjALnrUCUT70j0U2SNANuZWrgpQAZzmfyo-NVE9ryX90SBdjIYgAb4hwrWnVOiPSkF7ihr0GV712JkBSF72GFx0GTj2qrl_soH9vLGXGkPj5byjoJZ9X8wsswgBDQB8ngJyM2m9NEUWqTyTfX2ZL6kz5ml0T4SHX_VLGcTNMypQjtOOW6Pmo5AmNVYznPKWxV8TKi96wsVHRXbffyAi2KwSvhQfKDhCr6uQ"
             }]
+        }
+    },
+    'https://rems-bp-demo.rahtiapp.fi/api/jwk': {
+        name: 'REMS-BP',
+        jwks: {
+            "keys": [{
+                "alg": "RSA-OAEP-256",
+                "n": "gzsvvjg96aaYoTwJlwXR8fxJriQ9FUHlJ0He6qiTOriF_ez2ZW0K8kydaxywK_dCnlV-pBAbGuN26Cp881S4fP0YfkVwN8pOd-AQ2XtfGBbgFzastRQhwG32Y0_mLA4vTULd5z1wptZ2rcbNn1plZedR3UbUReazAQe_f6ebkrqS8th0cQ95BG4xgB7g8epQaQ0gqLrGHsRvvjtVeI4y42R2Ptot1PfFZf1uChITJlKT0BcbjE97MznF7D4tE6rTnBnQNa2mU4i-KHhWwDjzk_6JTqUCJCNoWyKiUJLoZwhY9BdHOSGyztAyNjCkU8gC1QGvG8zEqU_-NxM9tG_Hfw",
+                "kid": "1621408035",
+                "e": "AQAB",
+                "kty": "RSA"
+           }]
         }
     },
     'https://ega.ebi.ac.uk:8053/ega-openid-connect-server/jwk': {
@@ -43,7 +57,7 @@ const SIGNERS = {
             }]
         }
     },
-    'https://jwt-elixir-rems-proxy.rahtiapp.fi/jwks.json' : {
+    'https://jwt-elixir-rems-proxy.rahtiapp.fi/jwks.json': {
         name: 'REMS',
         jwks: {
             "keys": [{
@@ -55,7 +69,7 @@ const SIGNERS = {
             }]
         }
     },
-    'https://permissions-sds.rahtiapp.fi/jwks.json':  {
+    'https://permissions-sds.rahtiapp.fi/jwks.json': {
         name: 'REMS-SDS',
         jwks: {
             "keys": [{
@@ -91,14 +105,29 @@ const SIGNERS = {
              }]
         }
     },
-
+    'https://rems-1mg.rahtiapp.fi/api/jwk': {
+        name: 'REMS-1MG',
+        jwks: {
+           "keys": [{
+               "alg": "RSA-OAEP-256",
+               "use": "enc",
+               "n": "kr_ZFRptOxLJOy8NwdeEuFz24zww8Kd0qrXeoMI8WRrXq2loo0NY1c5xpvSTIKhcxJTqFqBT0pbzlDW6oDD1_jukwgrvJL3nJjpcybl7Glvw-8LUf_TluAEF5CktFWi7p3fJH67rh4wpf89WmZevGuwU6cIvA69KRpawm1F_3YSvK7QbXkHjTVVAfydxygSrVL2pOiKAL2QnOLdJVolztMNwuMjH0VUcZT0Q2JwlqfqUxraP4dseuTW506myXIm00svbwjyVmfEDrw82qRt_1T4_bFJR6_-Of1xV9h6teNgRh42lNUuopE9OQnNULcRIfyH0M3vwuiRHzWTM90bJDQ",
+               "kid": "enc-1625036853",
+               "e": "AQAB",
+               "kty": "RSA"
+           }]
+        },
+    },
 };
+
 const POLICIES = {
     'https://doi.org/10.1038/s41431-018-0219-y': 'The attestations for registered access (<a href="https://elixir-europe.org/services/compute/aai/bonafide">link</a>)'
 };
+
 const STATUSES = {
     'https://doi.org/10.1038/s41431-018-0219-y': 'Bona Fide researcher for registered access (<a href="https://elixir-europe.org/services/compute/aai/bonafide">link</a>)'
 }
+
 const timeFormat = new Intl.DateTimeFormat('en-GB', { 'dateStyle': 'full', 'timeStyle': 'full'});
 
 mgr = new Oidc.UserManager(config);
@@ -322,6 +351,3 @@ function rawlog(area, msg) {
     }
     document.getElementById(area).innerHTML += msg + '\r\n';
 }
-
-
-
