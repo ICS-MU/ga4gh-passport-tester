@@ -15,9 +15,11 @@
 .ok {
     color: #3de73d;
 }
+
 #login img {
     max-width: 200px;
 }
+
 /* userdata table */
 table.userdata {
     border-collapse: collapse;
