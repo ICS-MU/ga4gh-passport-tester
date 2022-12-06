@@ -3,16 +3,17 @@
 <head>
     <meta charset="utf-8" />
     <title>ELIXIR GA4GH Passport Tester</title>
-    <link rel="stylesheet" type="text/css" href="index.css" />
+    <link rel="stylesheet" type="text/css" href="res/css/index.css">
+    <link rel="icon" type="image/x-icon" href="res/img/favicon.ico">
 </head>
 <body>
   <!--suppress CheckImageSize -->
-  <img id="logo" src="elixir-aai.png" width="300" title="ELIXIR AAI" alt="ELIXIR AAI logo"/>
+  <img id="logo" src="res/img/elixir-aai.png" width="300" title="ELIXIR AAI" alt="ELIXIR AAI logo"/>
   <h1>ELIXIR GA4GH Passport Tester</h1>
   <p>(c) 2020 Masaryk University of Brno</p>
   <div id="div_no_login">
     Please log in:
-    <button id="login"><img src="login-button-orange-small.png" alt="Login"/></button>
+    <button id="login"><img src="res/img/ls-login.png" alt="Login"/></button>
   </div>
   <div id="div_login">
     <button id="relogin">Re-login</button>
@@ -85,10 +86,10 @@
     </div>
   </div>
 
-  <script src="oidc-client-js-1.10.1/dist/oidc-client.js"></script>
-  <script src="jsrsasign-9.1.9-all-min.js"></script>
-  <script src="config.js"></script>
-  <script src="index.js?version=20210208"></script>
+  <script src="res/js/oidc-client.min.js"></script>
+  <script src="res/js/jsrsasign-all.min.js"></script>
+  <script src="res/js/config.js"></script>
+  <script src="res/js/index.js"></script>
 </body>
 </html>
 

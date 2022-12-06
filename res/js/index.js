@@ -1,16 +1,28 @@
-
 const ISSUERS = {
     'https://ega.ebi.ac.uk:8053/ega-openid-connect-server/': 'EGAtest',
     'https://ega.ebi.ac.uk:8443/ega-openid-connect-server/': 'EGA',
     'https://jwt-elixir-rems-proxy.rahtiapp.fi/':'REMS',
     'https://permissions-sds.rahtiapp.fi/':'REMS-SDS',
-    'https://data-access.sd.csc.fi/':'REMS-SD',
-    'https://login.elixir-czech.org/oidc/': 'ELIXIR',
-    'https://rems-bp-demo.rahtiapp.fi/': 'REMS-BP'
-    'https://rems-1mg.rahtiapp.fi/': 'REMS-1MG'
+    'https://sd-apply.csc.fi/':'REMS-SD',
+    'https://login.elixir-czech.org/oidc': 'LS AAI (ELIXIR Legacy)',
+    'https://rems-bp-demo.rahtiapp.fi/': 'REMS-BP-demo',
+    'https://1mg-rems.sd.csc.fi/': 'REMS-1MG',
+    'https://bp-rems.sd.csc.fi/': 'REMS-BP',
+    'https://rems.etais.ee/': 'REMS-UT-EE'
 };
-
 const SIGNERS = {
+    'https://login.elixir-czech.org/perun-ga4gh-broker/jwk': {
+        name: 'LS AAI (ELIXIR Legacy)',
+        jwks: {
+            "keys": [{
+                "kty": "RSA",
+                "e": "AQAB",
+                "kid": "rsa1",
+                "n": "uVHPfUHVEzpgOnDNi3e2pVsbK1hsINsTy_1mMT7sxDyP-1eQSjzYsGSUJ3GHq9LhiVndpwV8y7Enjdj0purywtwk_D8z9IIN36RJAh1yhFfbyhLPEZlCDdzxas5Dku9k0GrxQuV6i30Mid8OgRQ2q3pmsks414Afy6xugC6u3inyjLzLPrhR0oRPTGdNMXJbGw4sVTjnh5AzTgX-GrQWBHSjI7rMTcvqbbl7M8OOhE3MQ_gfVLXwmwSIoKHODC0RO-XnVhqd7Qf0teS1JiILKYLl5FS_7Uy2ClVrAYd2T6X9DIr_JlpRkwSD899pq6PR9nhKguipJE0qUXxamdY9nw",
+                "alg": "RS256"
+            }]
+        }
+    },
     'https://sd-apply.csc.fi/api/jwk': {
         name: 'REMS-SD',
         jwks: {
@@ -23,8 +35,20 @@ const SIGNERS = {
             }]
         }
     },
-    'https://rems-bp-demo.rahtiapp.fi/api/jwk': {
+    'https://bp-rems.sd.csc.fi/api/jwk': {
         name: 'REMS-BP',
+        jwks: {
+            "keys": [{
+                "kid": "1621408035",
+                "e": "AQAB",
+                "kty": "RSA",
+                "alg": "RSA-OAEP-256",
+                "n": "gzsvvjg96aaYoTwJlwXR8fxJriQ9FUHlJ0He6qiTOriF_ez2ZW0K8kydaxywK_dCnlV-pBAbGuN26Cp881S4fP0YfkVwN8pOd-AQ2XtfGBbgFzastRQhwG32Y0_mLA4vTULd5z1wptZ2rcbNn1plZedR3UbUReazAQe_f6ebkrqS8th0cQ95BG4xgB7g8epQaQ0gqLrGHsRvvjtVeI4y42R2Ptot1PfFZf1uChITJlKT0BcbjE97MznF7D4tE6rTnBnQNa2mU4i-KHhWwDjzk_6JTqUCJCNoWyKiUJLoZwhY9BdHOSGyztAyNjCkU8gC1QGvG8zEqU_-NxM9tG_Hfw"
+           }]
+        }
+    },
+    'https://rems-bp-demo.rahtiapp.fi/api/jwk': {
+        name: 'REMS-BP-demo',
         jwks: {
             "keys": [{
                 "alg": "RSA-OAEP-256",
@@ -57,7 +81,7 @@ const SIGNERS = {
             }]
         }
     },
-    'https://jwt-elixir-rems-proxy.rahtiapp.fi/jwks.json': {
+    'https://jwt-elixir-rems-proxy.rahtiapp.fi/jwks.json' : {
         name: 'REMS',
         jwks: {
             "keys": [{
@@ -69,7 +93,7 @@ const SIGNERS = {
             }]
         }
     },
-    'https://permissions-sds.rahtiapp.fi/jwks.json': {
+    'https://permissions-sds.rahtiapp.fi/jwks.json':  {
         name: 'REMS-SDS',
         jwks: {
             "keys": [{
@@ -93,19 +117,7 @@ const SIGNERS = {
             }]
         }
     },
-    'https://rems-bp-demo.rahtiapp.fi/api/jwk': {
-        name: 'REMS-BP',
-        jwks: {
-            "keys": [{
-                "alg": "RSA-OAEP-256",
-                "n": "gzsvvjg96aaYoTwJlwXR8fxJriQ9FUHlJ0He6qiTOriF_ez2ZW0K8kydaxywK_dCnlV-pBAbGuN26Cp881S4fP0YfkVwN8pOd-AQ2XtfGBbgFzastRQhwG32Y0_mLA4vTULd5z1wptZ2rcbNn1plZedR3UbUReazAQe_f6ebkrqS8th0cQ95BG4xgB7g8epQaQ0gqLrGHsRvvjtVeI4y42R2Ptot1PfFZf1uChITJlKT0BcbjE97MznF7D4tE6rTnBnQNa2mU4i-KHhWwDjzk_6JTqUCJCNoWyKiUJLoZwhY9BdHOSGyztAyNjCkU8gC1QGvG8zEqU_-NxM9tG_Hfw",
-                "kid": "1621408035",
-                "e": "AQAB",
-                "kty": "RSA"
-             }]
-        }
-    },
-    'https://rems-1mg.rahtiapp.fi/api/jwk': {
+    'https://1mg-rems.sd.csc.fi/api/jwk': {
         name: 'REMS-1MG',
         jwks: {
            "keys": [{
@@ -118,16 +130,25 @@ const SIGNERS = {
            }]
         },
     },
+    'https://rems.etais.ee/api/jwk': {
+        name: 'REMS-UT-EE',
+        jwks: {
+            "keys": [{
+                "use": "sig",
+                "n": "jnVEJJXGNWhQgPV8sRiaXovNqijI-JttThtWhekEJ_FhRvxB0XzAzmc0OU_63HUDB-uT_9iZQqiFnHWcOwqKdzs4dcgqD7y3XPCzQSY7Zdrb2u4cZluh5yTMSGY8Dp5fY48FQTvb5_5rmCDIy2EAzlL0T-wxCYw2N4Eq-jAAp2sHSZYcGypHn9oIY3UlsgkE3Uoq7JXxKi6FS_OHOO-6a9C2pVIvM9nqQBBOX9buHHMGJ8rWDKInkrMPzO-2E0RwtHqtsoTdCiNwda5OgdEq9octuzAx9MVh9YHMBvPFXDQ1KIxN6VnHCbb0PaTyKNeyM4F-DOf2XmcuzUhYZTzpnw",
+                "kid": "sig-2022-09-08T12:28:51Z",
+                "e": "AQAB",
+                "kty": "RSA"
+            }]
+        },
+    },
 };
-
 const POLICIES = {
     'https://doi.org/10.1038/s41431-018-0219-y': 'The attestations for registered access (<a href="https://elixir-europe.org/services/compute/aai/bonafide">link</a>)'
 };
-
 const STATUSES = {
     'https://doi.org/10.1038/s41431-018-0219-y': 'Bona Fide researcher for registered access (<a href="https://elixir-europe.org/services/compute/aai/bonafide">link</a>)'
 }
-
 const timeFormat = new Intl.DateTimeFormat('en-GB', { 'dateStyle': 'full', 'timeStyle': 'full'});
 
 mgr = new Oidc.UserManager(config);
@@ -271,6 +292,7 @@ mgr.getUser().then(function (user) {
                 document.getElementById("pre"+i).style.display = "block";
             });
         }
+console.log(tablecounter);
 
         // basic view linked identities
         for(let linkedId of linked_ids.values()) {
@@ -313,8 +335,7 @@ mgr.getUser().then(function (user) {
         // user info
         rawlog('raw_userinfo',user.profile);
 
-    }
-    else {
+    } else {
         document.getElementById("div_login").style.display = "none";
         document.getElementById("div_no_login").style.display = "block";
     }
