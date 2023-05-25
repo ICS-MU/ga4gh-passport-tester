@@ -214,8 +214,8 @@ mgr.getUser().then(function (user) {
                 verified: false,
                 signerName: null
             };
-            console.log('processing visa ... ');
-            console.log(visaInfo);
+            console.log('processing visa ', tablecounter, visaInfo.visa.ga4gh_visa_v1.type, visaInfo.visa.ga4gh_visa_v1.value);
+            //console.log(visaInfo);
 
             const now = new Date();
             const iat = new Date(visa.iat * 1000);
@@ -326,9 +326,10 @@ mgr.getUser().then(function (user) {
         console.log(tablecounter);
 
         // basic view linked identities
+        console.log('linked_ids', linked_ids);
         for (let linkedId of linked_ids.values()) {
             document.getElementById("basic_linked_ids").innerHTML +=
-                "in " + ISSUERS[linkedId.iss] + ': ' + linkedId.sub + '<br>';
+                "in " + ISSUERS[linkedId.iss] + ' as ' + linkedId.sub + '<br>';
         }
         // affiliations
         for (let aff of affiliations.values()) {
@@ -408,7 +409,7 @@ function callTokenExchange(access_token) {
     const xhr = new XMLHttpRequest();
     xhr.onload = function () {
         console.log('Token exchange response: ' + xhr.status);
-        console.log(xhr.responseText);
+        // console.log(xhr.responseText);
         if (xhr.status === 200) {
             const jsonResponse = JSON.parse(xhr.responseText);
             const jwtPt = jsonResponse.access_token;
@@ -431,7 +432,7 @@ function callTokenExchange(access_token) {
             document.getElementById("PassportToken").innerHTML = '<pre class="rawjwt">' + xhr.responseText + '</pre>';
         }
     }
-    xhr.open("POST", config.authority + "token?" + query);
+    xhr.open("POST", config.authority + "/token?" + query);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.setRequestHeader("Authorization", "Basic " + btoa(config.client_id + ":"));
     xhr.send();
