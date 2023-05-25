@@ -210,7 +210,9 @@ mgr.getUser().then(function (user) {
             const visaInfo = {
                 header: header,
                 visa: visa,
-                jwt: jwt
+                jwt: jwt,
+                verified: false,
+                signerName: null
             };
             console.log('processing visa ... ');
             console.log(visaInfo);
@@ -221,29 +223,46 @@ mgr.getUser().then(function (user) {
             const asserted = new Date(visa.ga4gh_visa_v1.asserted * 1000);
 
             // verify signature (at the time of issuance, otherwise expired tokens would be marked as invalid signatures)
-            const signer_key = KEYUTIL.getKey(SIGNERS[visaInfo.header.jku].jwks.keys.filter(key => key.kid === visaInfo.header.kid)[0]);
-            const verified = KJUR.jws.JWS.verifyJWT(jwt, signer_key, {alg: ['RS256'], verifyAt: visaInfo.visa.iat});
+            const signer = SIGNERS[visaInfo.header.jku];
+            if (signer) {
+                const signer_key = KEYUTIL.getKey(signer.jwks.keys.filter(key => key.kid === visaInfo.header.kid)[0]);
+                visaInfo.verified = KJUR.jws.JWS.verifyJWT(jwt, signer_key, {alg: ['RS256'], verifyAt: visaInfo.visa.iat});
+                visaInfo.signerName = signer.name;
+            } else {
+                console.log("skipping visa verification, cannot find signer in SIGNERS for key ", visaInfo.header.jku);
+            }
 
-            document.getElementById(visaInfo.visa.ga4gh_visa_v1.type).innerHTML +=
-                '<table class="ga4gh_expert" id="tab' + tablecounter + '">' +
-                '<tr><th>value</th><td>' + visa.ga4gh_visa_v1.value + '</td></tr>' +
-                '<tr><th>source</th><td>' + visa.ga4gh_visa_v1.source + '</td></tr>' +
-                '<tr><th>by</th><td>' + visa.ga4gh_visa_v1.by + '</td></tr>' +
-                '<tr><th>conditions</th><td>' + (visa.ga4gh_visa_v1.conditions ? visa.ga4gh_visa_v1.conditions : '') + '</td></tr>' +
-                '<tr><th>issuer (iss)</th><td>' + visa.iss + ' (' + ISSUERS[visa.iss] + ')</td></tr>' +
-                '<tr><th>subject (sub)</th><td>' + visa.sub + '</td></tr>' +
-                '<tr><th>asserted at</th><td>' + visa.ga4gh_visa_v1.asserted + ' (' + timeFormat.format(asserted) + ')</td></tr>' +
-                '<tr><th>issued at (iat)</th><td ' + (iat > now ? 'class="warning"' : '') + '>' + visa.iat + ' (' + timeFormat.format(iat) + ')' + (iat > now ? ' issued in the future ' : '') + '</td></tr>' +
-                '<tr><th>expires at (exp)</th><td ' + (exp < now ? 'class="warning"' : '') + '>' + visa.exp + ' (' + timeFormat.format(exp) + ')' + (exp < now ? ' visa expired ' : '') + '</td></tr>' +
-                '<tr><th>JWT id (jti)</th><td>' + visa.jti + '</td></tr>' +
-                '<tr><th>signature</th><td ' + (!verified ? 'class="warning"' : '') + '>jku: ' + visaInfo.header.jku + ' kid: ' + visaInfo.header.kid
-                + ' (' + SIGNERS[visaInfo.header.jku].name + ') ' + (!verified ? 'invalid signature' : '<span class="ok">verified</span>') + '</td></tr>' +
-                '<tr><td colspan="2" class="rawjwt">' +
-                '<button id="but' + tablecounter + '">Display raw decoded JWT</button>' +
-                '<pre id="pre' + tablecounter + '">' + JSON.stringify(visaInfo.header, null, 2) + '<br>.<br>' + JSON.stringify(visaInfo.visa, null, 2) + '</pre>' +
-                '</td></tr>' +
-                '</table>'
-            ;
+            // issuer friendly name
+            let issuer = ISSUERS[visa.iss];
+            if (! issuer) {
+                issuer = 'unknown';
+            }
+
+            try {
+                document.getElementById(visa.ga4gh_visa_v1.type).innerHTML +=
+                    '<table class="ga4gh_expert" id="tab' + tablecounter + '">' +
+                    '<tr><th>value</th><td>' + visa.ga4gh_visa_v1.value + '</td></tr>' +
+                    '<tr><th>source</th><td>' + visa.ga4gh_visa_v1.source + '</td></tr>' +
+                    '<tr><th>by</th><td>' + visa.ga4gh_visa_v1.by + '</td></tr>' +
+                    '<tr><th>conditions</th><td>' + (visa.ga4gh_visa_v1.conditions ? visa.ga4gh_visa_v1.conditions : '') + '</td></tr>' +
+                    '<tr><th>issuer (iss)</th><td>' + visa.iss + ' (' + issuer + ')</td></tr>' +
+                    '<tr><th>subject (sub)</th><td>' + visa.sub + '</td></tr>' +
+                    '<tr><th>asserted at</th><td>' + visa.ga4gh_visa_v1.asserted + ' (' + timeFormat.format(asserted) + ')</td></tr>' +
+                    '<tr><th>issued at (iat)</th><td ' + (iat > now ? 'class="warning"' : '') + '>' + visa.iat + ' (' + timeFormat.format(iat) + ')' + (iat > now ? ' issued in the future ' : '') + '</td></tr>' +
+                    '<tr><th>expires at (exp)</th><td ' + (exp < now ? 'class="warning"' : '') + '>' + visa.exp + ' (' + timeFormat.format(exp) + ')' + (exp < now ? ' visa expired ' : '') + '</td></tr>' +
+                    '<tr><th>JWT id (jti)</th><td>' + (visa.jti ? visa.jti : '') + '</td></tr>' +
+                    '<tr><th>signature</th><td ' + (!visaInfo.verified ? 'class="warning"' : '') + '>jku: ' + visaInfo.header.jku + ' kid: ' + visaInfo.header.kid
+                    + ' (' + visaInfo.signerName + ') ' + (!visaInfo.verified ? 'invalid signature' : '<span class="ok">verified</span>') + '</td></tr>' +
+                    '<tr><td colspan="2" class="rawjwt">' +
+                    '<button id="but' + tablecounter + '">Display raw decoded JWT</button>' +
+                    '<pre id="pre' + tablecounter + '">' + JSON.stringify(visaInfo.header, null, 2) + '<br>.<br>' + JSON.stringify(visa, null, 2) + '</pre>' +
+                    '</td></tr>' +
+                    '</table>'
+                ;
+            } catch (e) {
+                console.log("visa ",tablecounter," problem");
+                console.log(e);
+            }
             tablecounter++;
 
             // process visa for basic view
@@ -403,7 +422,7 @@ function callTokenExchange(access_token) {
                 '<p>Issued Token Type</p>' +
                 '<pre class="rawjwt">' + jsonResponse.issued_token_type + '</pre>' +
                 '<p>Expires In</p>' +
-                '<pre class="rawjwt">' + jsonResponse.expires_in + 'sec</pre>' +
+                '<pre class="rawjwt">' + jsonResponse.expires_in + ' sec</pre>' +
                 '<p>Refresh token</p>' +
                 '<pre class="rawjwt">' + (jsonResponse.refresh_token === "" ? "-" : jsonResponse.refresh_token) + '</pre>' +
                 '<p>Raw response:</p>';
