@@ -8,7 +8,8 @@ const ISSUERS = {
     'https://rems-bp-demo.rahtiapp.fi/': 'REMS-BP-demo',
     'https://1mg-rems.sd.csc.fi/': 'REMS-1MG',
     'https://bp-rems.sd.csc.fi/': 'REMS-BP',
-    'https://rems.etais.ee/': 'REMS-UT-EE'
+    'https://rems.etais.ee/': 'REMS-UT-EE',
+    'https://rems.gdi.nbis.se/': 'REMS-GDI-NBIS'
 };
 const SIGNERS = {
     'https://login.elixir-czech.org/perun-ga4gh-broker/jwk': {
@@ -140,6 +141,17 @@ const SIGNERS = {
                 "e": "AQAB",
                 "kty": "RSA"
             }]
+        },
+    },
+    'https://rems.gdi.nbis.se/api/jwk': {
+        name: 'REMS-GDI-NBIS',
+        jwks: {
+	    "keys":[{
+		    "n":"nCjfFp_GYoRYsROccIeHL5vEGuhxUsgM3jhrH_Bq1b7SsIyjxN5-qxeV2ZQ9SpFC9Piwlsf7-S3nHuDJqqrIyaecyvluxoUhd0uMKCAagEquY6JHUzh6iJQlEFmO8VStysgGuK5oXLFm6BaQFZqeJSgLrn_j6nXPlHepu-ZwIGa8gyk6SGYwe7sPW1lusNl3hyjiDg7m4pvYMJHWm3Cki1HNmXiTRAtubySJ5x_qbKADyuRKcpn1rg-EjJ8JLyLBJTeiIeQXrtTkYUnW1BQ0kRUGYvsfs-1YPzA467fDG_5j3kTFHxQTzAlh2zppu4zdeEGl5wMn7FXZk_ZOTqO91Q",
+		    "kid": "zjItCgeRKS6zJBfGegBXJYPN6eZRdKeqOXo9fxDsUYs",
+		    "e": "AQAB",
+		    "kty": "RSA"
+	    }]
         },
     },
 };
