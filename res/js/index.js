@@ -147,12 +147,12 @@ const SIGNERS = {
     'https://rems.gdi.nbis.se/api/jwk': {
         name: 'REMS-GDI-NBIS',
         jwks: {
-	    "keys":[{
-		    "n":"nCjfFp_GYoRYsROccIeHL5vEGuhxUsgM3jhrH_Bq1b7SsIyjxN5-qxeV2ZQ9SpFC9Piwlsf7-S3nHuDJqqrIyaecyvluxoUhd0uMKCAagEquY6JHUzh6iJQlEFmO8VStysgGuK5oXLFm6BaQFZqeJSgLrn_j6nXPlHepu-ZwIGa8gyk6SGYwe7sPW1lusNl3hyjiDg7m4pvYMJHWm3Cki1HNmXiTRAtubySJ5x_qbKADyuRKcpn1rg-EjJ8JLyLBJTeiIeQXrtTkYUnW1BQ0kRUGYvsfs-1YPzA467fDG_5j3kTFHxQTzAlh2zppu4zdeEGl5wMn7FXZk_ZOTqO91Q",
-		    "kid": "zjItCgeRKS6zJBfGegBXJYPN6eZRdKeqOXo9fxDsUYs",
-		    "e": "AQAB",
-		    "kty": "RSA"
-	    }]
+            "keys": [{
+                "n": "nCjfFp_GYoRYsROccIeHL5vEGuhxUsgM3jhrH_Bq1b7SsIyjxN5-qxeV2ZQ9SpFC9Piwlsf7-S3nHuDJqqrIyaecyvluxoUhd0uMKCAagEquY6JHUzh6iJQlEFmO8VStysgGuK5oXLFm6BaQFZqeJSgLrn_j6nXPlHepu-ZwIGa8gyk6SGYwe7sPW1lusNl3hyjiDg7m4pvYMJHWm3Cki1HNmXiTRAtubySJ5x_qbKADyuRKcpn1rg-EjJ8JLyLBJTeiIeQXrtTkYUnW1BQ0kRUGYvsfs-1YPzA467fDG_5j3kTFHxQTzAlh2zppu4zdeEGl5wMn7FXZk_ZOTqO91Q",
+                "kid": "zjItCgeRKS6zJBfGegBXJYPN6eZRdKeqOXo9fxDsUYs",
+                "e": "AQAB",
+                "kty": "RSA"
+            }]
         },
     },
     'https://gdi-demo.sd.csc.fi/api/jwk': {
