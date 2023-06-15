@@ -175,7 +175,7 @@ const STATUSES = {
 }
 const timeFormat = new Intl.DateTimeFormat('en-GB', {'dateStyle': 'full', 'timeStyle': 'full'});
 
-mgr = new Oidc.UserManager(config);
+mgr = new Oidc.UserManager(config.oidc);
 expert = new URLSearchParams(window.location.search).has('expert');
 mgr.getUser().then(function (user) {
     if (user) {
@@ -280,7 +280,7 @@ mgr.getUser().then(function (user) {
             // process visa for basic view
             switch (visa.ga4gh_visa_v1.type) {
                 case 'LinkedIdentities':
-                    if (visa.sub === user.profile.sub && visa.iss === config.authority) {
+                    if (visa.sub === user.profile.sub && visa.iss === config.oidc.authority) {
                         // issued by elixir aai
                         for (const lid of visa.ga4gh_visa_v1.value.split(';').map(pair => pair.split(','))) {
                             let linkedId = {};
@@ -299,7 +299,7 @@ mgr.getUser().then(function (user) {
                         for (const lid of visa.ga4gh_visa_v1.value.split(';').map(pair => pair.split(','))) {
                             let lidsub = decodeURIComponent(lid[0]);
                             let lidiss = decodeURIComponent(lid[1]);
-                            if (lidsub === user.profile.sub && lidiss === config.authority) {
+                            if (lidsub === user.profile.sub && lidiss === config.oidc.authority) {
                                 linked_ids.set(linkedId.key, linkedId);
                             }
                         }
@@ -380,7 +380,9 @@ mgr.getUser().then(function (user) {
         rawlog('raw_userinfo', user.profile);
 
         // v1.2 token exchange - Passport token
-        callTokenExchange(user.access_token);
+        if (config.supportTokenExchange) {
+            callTokenExchange(user.access_token);
+        }
 
     } else {
         document.getElementById("div_login").style.display = "none";
@@ -418,36 +420,38 @@ function callTokenExchange(access_token) {
         grant_type: "urn:ietf:params:oauth:grant-type:token-exchange"
     });
     const query = params.toString();
-    const xhr = new XMLHttpRequest();
-    xhr.onload = function () {
-        console.log('Token exchange response: ' + xhr.status);
-        // console.log(xhr.responseText);
-        if (xhr.status === 200) {
-            const jsonResponse = JSON.parse(xhr.responseText);
-            const jwtPt = jsonResponse.access_token;
-            document.getElementById("PassportToken").innerHTML +=
-                '<p>Header</p>' +
-                '<pre class="rawjwt">' + JSON.stringify(JSON.parse(atob(jwtPt.split('.')[0])), undefined, 2) + '</pre>' +
-                '<p>Payload</p>' +
-                '<pre class="rawjwt">' + JSON.stringify(JSON.parse(atob(jwtPt.split('.')[1])), undefined, 2) + '</pre>' +
-                '<p>Token type</p>' +
-                '<pre class="rawjwt">' + jsonResponse.token_type + '</pre>' +
-                '<p>Issued Token Type</p>' +
-                '<pre class="rawjwt">' + jsonResponse.issued_token_type + '</pre>' +
-                '<p>Expires In</p>' +
-                '<pre class="rawjwt">' + jsonResponse.expires_in + ' sec</pre>' +
-                '<p>Refresh token</p>' +
-                '<pre class="rawjwt">' + (jsonResponse.refresh_token === "" ? "-" : jsonResponse.refresh_token) + '</pre>' +
-                '<p>Raw response:</p>';
-            rawlog("raw_passport_token", jsonResponse);
-        } else {
-            document.getElementById("PassportToken").innerHTML = '<pre class="rawjwt">' + xhr.responseText + '</pre>';
+    mgr._metadataService.getTokenEndpoint(false).then(function(url) {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+            console.log('Token exchange response: ' + xhr.status);
+            // console.log(xhr.responseText);
+            if (xhr.status === 200) {
+                const jsonResponse = JSON.parse(xhr.responseText);
+                const jwtPt = jsonResponse.access_token;
+                document.getElementById("PassportToken").innerHTML +=
+                    '<p>Header</p>' +
+                    '<pre class="rawjwt">' + JSON.stringify(JSON.parse(atob(jwtPt.split('.')[0])), undefined, 2) + '</pre>' +
+                    '<p>Payload</p>' +
+                    '<pre class="rawjwt">' + JSON.stringify(JSON.parse(atob(jwtPt.split('.')[1])), undefined, 2) + '</pre>' +
+                    '<p>Token type</p>' +
+                    '<pre class="rawjwt">' + jsonResponse.token_type + '</pre>' +
+                    '<p>Issued Token Type</p>' +
+                    '<pre class="rawjwt">' + jsonResponse.issued_token_type + '</pre>' +
+                    '<p>Expires In</p>' +
+                    '<pre class="rawjwt">' + jsonResponse.expires_in + ' sec</pre>' +
+                    '<p>Refresh token</p>' +
+                    '<pre class="rawjwt">' + (jsonResponse.refresh_token === "" ? "-" : jsonResponse.refresh_token) + '</pre>' +
+                    '<p>Raw response:</p>';
+                rawlog("raw_passport_token", jsonResponse);
+            } else {
+                document.getElementById("PassportToken").innerHTML = '<pre class="rawjwt">' + xhr.responseText + '</pre>';
+            }
         }
-    }
-    xhr.open("POST", config.authority + "/token?" + query);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.setRequestHeader("Authorization", "Basic " + btoa(config.client_id + ":"));
-    xhr.send();
+        xhr.open("POST", url  + "?" + query);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Authorization", "Basic " + btoa(config.oidc.client_id + ":"));
+        xhr.send();
+    });
 }
 
 document.getElementById("login").addEventListener("click", login, false);
