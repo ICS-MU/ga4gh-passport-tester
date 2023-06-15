@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>LifeScience RI GA4GH Passport Tester</title>
+  <link rel="stylesheet" type="text/css" href="/res/css/index.css">
+  <link rel="icon" type="image/x-icon" href="/res/img/favicon.ico">
+</head>
+<body>
+<!--suppress CheckImageSize -->
+<img id="logo" src="/res/img/elixir.png" width="300" title="ELIXIR" alt="ELIXIR logo"/>
+<img id="logo2" src="/res/img/lifescience-ri.png" width="300" title="LifeScience RI" alt="LifeScience RI logo"/>
+<h1>LifeScience RI GA4GH Passport Tester</h1>
+<p>(c) 2020 Masaryk University of Brno</p>
+<div id="div_no_login">
+  Please log in:
+  <button id="login"><img src="/res/img/ls-login.png" alt="Login"/></button>
+</div>
+<div id="div_login">
+  <button id="relogin">Re-login</button>
+  <button id="logout">Logout</button>
+  <h2>Your user info:</h2>
+  <table class="userdata">
+    <tr>
+      <th>id:</th>
+      <td id="sub"></td>
+    </tr>
+    <tr>
+      <th>name:</th>
+      <td id="name"></td>
+    </tr>
+    <tr>
+      <th>given name:</th>
+      <td id="given_name"></td>
+    </tr>
+    <tr>
+      <th>family name:</th>
+      <td id="family_name"></td>
+    </tr>
+    <tr>
+      <th>preferred username:</th>
+      <td id="preferred_username"></td>
+    </tr>
+    <tr>
+      <th>email:</th>
+      <td id="email"></td>
+    </tr>
+    <tr>
+      <th>locale:</th>
+      <td id="locale"></td>
+    </tr>
+    <tr>
+      <th>zoneinfo:</th>
+      <td id="zoneinfo"></td>
+    </tr>
+  </table>
+
+  <h2>Your GA4GH Passport:</h2>
+  <div id="basic_view">
+    <h3>Basic view</h3>
+
+    <table class="ga4gh_basic" id="ga4gh_table_basic">
+      <tr>
+        <th>Your ID:</th>
+        <td id="basic_id"></td>
+      </tr>
+      <tr>
+        <th>You are also known as:</th>
+        <td id="basic_linked_ids"></td>
+      </tr>
+      <tr>
+        <th>Your Affiliations and roles:</th>
+        <td id="basic_affiliations"></td>
+      </tr>
+      <tr>
+        <th>Terms and policies you have committed to:</th>
+        <td id="basic_policies"></td>
+      </tr>
+      <tr>
+        <th>Your registered status as a researcher:</th>
+        <td id="basic_statuses"></td>
+      </tr>
+      <tr>
+        <th>Controlled Access data objects you have a permission to access:</th>
+        <td id="basic_accesses"></td>
+      </tr>
+    </table>
+
+    <button id="expert_button">Switch to expert view</button>
+  </div>
+  <div id="expert_view">
+    <h3>Expert view</h3>
+
+    <ul>
+      <li><a href="#ControlledAccessGrants_">ControlledAccessGrants Visas</a></li>
+      <li><a href="#AcceptedTermsAndPolicies_">AcceptedTermsAndPolicies Visas</a></li>
+      <li><a href="#ResearcherStatus_">ResearcherStatus Visas</a></li>
+      <li><a href="#AffiliationAndRole_">AffiliationAndRole Visas</a></li>
+      <li><a href="#LinkedIdentities_">LinkedIdentities Visas</a></li>
+    </ul>
+
+    <h4 id="ControlledAccessGrants_">ControlledAccessGrants Visas</h4>
+    <div id="ControlledAccessGrants"></div>
+
+    <h4 id="AcceptedTermsAndPolicies_">AcceptedTermsAndPolicies Visas</h4>
+    <div id="AcceptedTermsAndPolicies"></div>
+
+    <h4 id="ResearcherStatus_">ResearcherStatus Visas</h4>
+    <div id="ResearcherStatus"></div>
+
+    <h4 id="AffiliationAndRole_">AffiliationAndRole Visas</h4>
+    <div id="AffiliationAndRole"></div>
+
+    <h4 id="LinkedIdentities_">LinkedIdentities Visas</h4>
+    <div id="LinkedIdentities"></div>
+
+
+    <hr>
+    <h3>GA4GH Passport Token</h3>
+    <div id="PassportToken"></div>
+    <pre id="raw_passport_token" class="rawjwt"></pre>
+
+    <hr>
+    <h3>Other information</h3>
+
+    <h4>Access token:</h4>
+    <table class="userdata">
+      <tr>
+        <th>iat:</th>
+        <td id="access_token_iat"></td>
+      </tr>
+      <tr>
+        <th>exp:</th>
+        <td id="access_token_exp"></td>
+      </tr>
+    </table>
+    <pre id="raw_access_token" class="rawjwt"></pre>
+
+    <h4>Id token:</h4>
+    <table class="userdata">
+      <tr>
+        <th>auth_time:</th>
+        <td id="id_token_auth_time"></td>
+      </tr>
+      <tr>
+        <th>iat:</th>
+        <td id="id_token_iat"></td>
+      </tr>
+      <tr>
+        <th>exp:</th>
+        <td id="id_token_exp"></td>
+      </tr>
+    </table>
+    <pre id="raw_id_token" class="rawjwt"></pre>
+
+    <h4>UserInfo:</h4>
+    <pre id="raw_userinfo" class="rawjwt"></pre>
+  </div>
+</div>
+
+<script src="/res/js/oidc-client.min.js"></script>
+<script src="/res/js/jsrsasign-all.min.js"></script>
+<script src="/res/js/config-lsaai.js"></script>
+<script src="/res/js/index.js?timestamp=20230530"></script>
+</body>
+</html>
+
