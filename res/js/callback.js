@@ -1,4 +1,4 @@
-new Oidc.UserManager(config).signinRedirectCallback().then(function () {
+new Oidc.UserManager(config.oidc).signinRedirectCallback().then(function () {
     window.location = "index.html";
 }).catch(function (e) {
     document.getElementById('error_explanation').innerText

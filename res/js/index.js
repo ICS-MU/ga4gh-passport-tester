@@ -4,24 +4,57 @@ const ISSUERS = {
     'https://jwt-elixir-rems-proxy.rahtiapp.fi/': 'REMS',
     'https://permissions-sds.rahtiapp.fi/': 'REMS-SDS',
     'https://sd-apply.csc.fi/': 'REMS-SD',
-    'https://login.elixir-czech.org/oidc': 'LS AAI (ELIXIR Legacy)',
+    'https://login.aai.lifescience-ri.eu/oidc/': 'LS Login',
+    'https://login.aai.lifescience-ri.eu/oidc': 'LS Login',
     'https://rems-bp-demo.rahtiapp.fi/': 'REMS-BP-demo',
     'https://1mg-rems.sd.csc.fi/': 'REMS-1MG',
     'https://bp-rems.sd.csc.fi/': 'REMS-BP',
     'https://rems.etais.ee/': 'REMS-UT-EE',
     'https://rems.gdi.nbis.se/': 'REMS-GDI-NBIS',
-    'https://gdi-demo.sd.csc.fi/': 'REMS-GDI-CSC-DEMO'
+    'https://gdi-demo.sd.csc.fi/': 'REMS-GDI-CSC-DEMO',
+    'https://rems.dev.gdi.lu/': 'REMS-GDI-LU-DEV',
+    'https://rems.gdi.biodata.pt/': 'REMS-GDI-BIODATA-PT',
+    'https://gdi.cloud.ut.ee/': 'REMS-GDI-EE',
+    'https://gdi.vib.be/': 'REMS-GDI-BE',
+    'https://rems.gdifr.lindan.se/': 'REMS-GDI-FR',
+    'https://daam.portal.dev.gdi.lu/': 'GDI Portal',
+    'https://rems.gdi.elixir-greece.org/': 'REMS-GDI-GR',
+    'https://rems.ejprd.nbis.se/': 'REMS-EJPRD-NBIS',
+    'https://id.portal.dev.gdi.lu/realms/gdi': 'GDI-USER-PORTAL',
 };
 const SIGNERS = {
-    'https://login.elixir-czech.org/perun-ga4gh-broker/jwk': {
-        name: 'LS AAI (ELIXIR Legacy)',
+    'https://rems.gdi.elixir-greece.org/api/jwk': {
+        name: 'REMS-GDI-GR',
+        jwks: {
+            "keys": [{
+                "n": "oCPS8qs2CWsPB2c_DudN0KwHVW28laEgsoaXk8mtucMKBeTWU0HxzrCHhrHeaaKp8IC7fF-cBp4fGrr2QV6bkofrDwrjcBERcRF4bTmybjb3v_9jahdQ6cbVaoEMkXiiuOk9lMg1tp4inE6ckqBzbCjZNyYY2LF1gbyRtMJgRQNyxvFCKqcmuo50mu_k0we7WLnnyALmOD4IAfRZnFgnbhMImDs4KFE5If366ghl_BCCWdfYMg-002n5_v9l_G7Z16HCJdD4VNtWY_Pz1o-CEEuGjr-afkaU4Ay42Iie0YItOY0nFvLlgppByUeE5GQj-S-EYhn59AALgTpK7SkeOQ",
+                "kid": "gdi-demo",
+                "e": "AQAB",
+                "kty": "RSA"
+            }]
+        }
+    },
+    'https://daam.portal.dev.gdi.lu/api/jwk': {
+        name: 'GDI Portal',
+        jwks: {
+            "keys": [{
+                "n": "pOL2dpGI9dWLk-2AS-J9CyfvkQppVUkEQW70HrV2YHfoWCBfrnX_yeXTyXWEAcEmS9ToIo0OUJhovur1Fkeg_1Kk7CwDJNsjDDq-KLXoU_5faICe5hd5gs0Vk_WHMQYaJOOoymKWuBY0GEvhABlAa3Y9sNC535CTNgA-W7sIeiKLCVVooUqS4x8Rrk7FqbxL9H5ZxJOtjp7bn-uIESsXkDdORVBxkaMBH0EccpSJE-K2Qvfg6OvkbrEIf3owbjpXKN_OWc4BvQRL0lpfz2DGE6qi91P_qhbkS9yaN18XQTxYAKRxKVnBom75H_DIYaxK2JecqsoswQ690qFiqVw6Pw",
+                "kid": "gdi-demo",
+                "e": "AQAB",
+                "kty": "RSA"
+            }]
+        }
+    },
+    'https://login.aai.lifescience-ri.eu/perun-ga4gh-broker/jwk': {
+        name: 'LS Login',
         jwks: {
             "keys": [{
                 "kty": "RSA",
                 "e": "AQAB",
+                "use": "sig",
                 "kid": "rsa1",
-                "n": "uVHPfUHVEzpgOnDNi3e2pVsbK1hsINsTy_1mMT7sxDyP-1eQSjzYsGSUJ3GHq9LhiVndpwV8y7Enjdj0purywtwk_D8z9IIN36RJAh1yhFfbyhLPEZlCDdzxas5Dku9k0GrxQuV6i30Mid8OgRQ2q3pmsks414Afy6xugC6u3inyjLzLPrhR0oRPTGdNMXJbGw4sVTjnh5AzTgX-GrQWBHSjI7rMTcvqbbl7M8OOhE3MQ_gfVLXwmwSIoKHODC0RO-XnVhqd7Qf0teS1JiILKYLl5FS_7Uy2ClVrAYd2T6X9DIr_JlpRkwSD899pq6PR9nhKguipJE0qUXxamdY9nw",
-                "alg": "RS256"
+                "alg": "RS256",
+                "n": "zl6laZMB_VXBAUelEO2NSbDnJgsxzuQARYsxMuF38Z_0lf7WkTPDilJme7QEr90R-Q2lrWl8tMosJe4J4N1VL9hwtg1SgnAMlhnUH0ppqpq_M983HzdpzoaNh27E5m8bHzx9RX7_fqnNspCfUQEeEubWEcXGK8ow8zzDEcW16-OZQT24tDNjDHAO9ksAkcs7bg8C4Wz1WBw6KqOMWY2gPzVVUAqK_XWhCktQwHB19XB1xH8ujH7PSKR4eHUgGR2mLgBGFGOZgD-9SnLf7NiF7e2gC41ZfkVBls5UX32DxQzL6Zu0RauD2T4Iu_8EPhC2GKbHPmcIW_EBiocaw5SIst5g4iINiwDLGZ5Hcs2LyzN_HWgrgtUMGBN006KgNGYuSw5wG_OKdKQYMsfylDLKkCRwYuZisd0e3WF_RjCOmSFXvd7d7WhfGp5ElsyuIwaOZeswTjUFPkFxeJiNTVlA1TvgFLdBEJ_SBJOdO7_XMwVdRlVDRbGCEGJK1vh0xD-78VT4Wpyw6QsvJqrHmqoMt1KK1ehvN2qSEFhQAyJYl0hDKG75MQl4lxWOuRMlPFgiOgJuBcPsraAWXHYv6OpUe-9tBfY8Xa32rtaFbzr_WNOaLdq1pVQZzm2YM0YYKyn3WrmIBmNg4fpLNe_r0ZJiFmupNKfjv_xi6KQydSvNH2E"
             }]
         }
     },
@@ -107,15 +140,16 @@ const SIGNERS = {
             }]
         }
     },
-    'https://login.elixir-czech.org/oidc/jwk': {
-        name: 'ELIXIR',
+    'https://login.aai.lifescience-ri.eu/oidc/jwk': {
+        name: 'LS Login',
         jwks: {
             "keys": [{
                 "kty": "RSA",
                 "e": "AQAB",
+                "use": "sig",
                 "kid": "rsa1",
-                "n": "uVHPfUHVEzpgOnDNi3e2pVsbK1hsINsTy_1mMT7sxDyP-1eQSjzYsGSUJ3GHq9LhiVndpwV8y7Enjdj0purywtwk_D8z9IIN36RJAh1yhFfbyhLPEZlCDdzxas5Dku9k0GrxQuV6i30Mid8OgRQ2q3pmsks414Afy6xugC6u3inyjLzLPrhR0oRPTGdNMXJbGw4sVTjnh5AzTgX-GrQWBHSjI7rMTcvqbbl7M8OOhE3MQ_gfVLXwmwSIoKHODC0RO-XnVhqd7Qf0teS1JiILKYLl5FS_7Uy2ClVrAYd2T6X9DIr_JlpRkwSD899pq6PR9nhKguipJE0qUXxamdY9nw",
-                "alg": "RS256"
+                "alg": "RS256",
+                "n": "zl6laZMB_VXBAUelEO2NSbDnJgsxzuQARYsxMuF38Z_0lf7WkTPDilJme7QEr90R-Q2lrWl8tMosJe4J4N1VL9hwtg1SgnAMlhnUH0ppqpq_M983HzdpzoaNh27E5m8bHzx9RX7_fqnNspCfUQEeEubWEcXGK8ow8zzDEcW16-OZQT24tDNjDHAO9ksAkcs7bg8C4Wz1WBw6KqOMWY2gPzVVUAqK_XWhCktQwHB19XB1xH8ujH7PSKR4eHUgGR2mLgBGFGOZgD-9SnLf7NiF7e2gC41ZfkVBls5UX32DxQzL6Zu0RauD2T4Iu_8EPhC2GKbHPmcIW_EBiocaw5SIst5g4iINiwDLGZ5Hcs2LyzN_HWgrgtUMGBN006KgNGYuSw5wG_OKdKQYMsfylDLKkCRwYuZisd0e3WF_RjCOmSFXvd7d7WhfGp5ElsyuIwaOZeswTjUFPkFxeJiNTVlA1TvgFLdBEJ_SBJOdO7_XMwVdRlVDRbGCEGJK1vh0xD-78VT4Wpyw6QsvJqrHmqoMt1KK1ehvN2qSEFhQAyJYl0hDKG75MQl4lxWOuRMlPFgiOgJuBcPsraAWXHYv6OpUe-9tBfY8Xa32rtaFbzr_WNOaLdq1pVQZzm2YM0YYKyn3WrmIBmNg4fpLNe_r0ZJiFmupNKfjv_xi6KQydSvNH2E"
             }]
         }
     },
@@ -165,6 +199,100 @@ const SIGNERS = {
                 "kty": "RSA"
             }]
         },
+    },
+    'https://rems.dev.gdi.lu/api/jwk': {
+        name: 'REMS-GDI-LU-DEMO',
+        jwks: {
+            "keys":[{
+                "n": "wrwPPlRUEJQPrQkc9LmBNTWzsZNfAumTbKC3d2FFoRTVsNaJZ_G0B_P1MLN_WapSe11VYRpY8vxhGw3a1HkZkOSRL9S_Vbxva0zpZNYDRxyHpSJJ0G9pSlZRo05kjMFVGuPn04qF7geDnFqMqSHv9rtdIAcLOAlBUI0EAVjcIkuaeFvr7UYklox5pj2F3jZrer3EJdfDUI3PfNKt1hJYUvvt5wQcLgcNWeyO_otdTtC30f4iI6tExf8GeMdUNvc23-giT2f9_ZzORDK3GIBWWLwD79K2V93AC3lXG4yQrchlEoSc6Z9PFZ3k_-wLGLYxOcNztZbzG_jV4v6tlq3qQw",
+                "kid": "gdi-demo",
+                "e": "AQAB",
+                "kty": "RSA"
+            }]
+        }
+    },
+    'https://rems.gdi.biodata.pt/api/jwk': {
+        name: 'REMS-GDI-BIODATA-PT',
+        jwks: {
+            "keys": [{
+                "n": "2GPTcVXYDfajOFiOA18xIa0vj97hDQKHUKlxkz4zjZDXBAnfStmpA2U2Og0OMexUj-wzngeex7iCZNUyBsWtNzOfsy4kJJ5tRAnhSmld2zLLuFrroOadjKu-q5oa_Q4RcwTMLI3OjaWtj24e2Gn-qQPb8Ajh3e4Ia1vE7kuEglL157s9IblSHyubyk9--u3FpQs9VRK2hG-pD5xAj7Rl-ghatmWvfQN6K1vy3rwP1ECfDnSGpU9iQIMKCkP2XzsFAKg0WIzRu2CRzGV6HT58BGjE6AH9N92CwY0KQCEaIEzFkNzs7WDZYzMV1dbMoFyfXHxtPBXo5v6RtGcKJfAB1Q",
+                "kid": "gdi-demo",
+                "e": "AQAB",
+                "kty": "RSA"
+            }]
+        }
+    },
+    'https://gdi.cloud.ut.ee/api/jwk': {
+        name: 'REMS-GDI-EE',
+        jwks: {
+            "keys": [{
+                "alg": "RS256",
+                "use": "sig",
+                "kty": "RSA",
+                "e": "AQAB",
+                "kid": "gdi-estonia-rems-2023-10-04",
+                "n": "h9fwaZEN8i-20UJbUJE9csGm2HwNouogu5mX4efBEn7QrmYPRK47w320EqolhxEqc6HZvWzC5M_7QjIGYMsx4fqpSmspx7uxjTRF4VT-HAuyhL492xIvVLV4KAJ3MsDz5MbuOszewkdRGTW-8dLdPsychZkM16HYh_0S689ew5ppVGcKPEE0N8_hOusAUDt3KJyCIW31-qbkPc3hqd92Nli3N_Ww7RTg_6B9FXR9lB_dw5Aui3V55pnnVTnOq0E07iiiiNpb17D4f67V9CayAJQsQlpWXOagyb_-9cF-NQ4aOkc0LE4U8s_1l7WCxoLMNiEBpymb6Ck16pxQufFwuQ",
+            }]
+        }
+    },
+    'https://gdi.vib.be/api/jwk': {
+        name: 'REMS-GDI-BE',
+        jwks: {
+            "keys": [{
+                "n":"1YReX3VUNKLMYdNl2yXoLeq_AXYD9b6_3ZOObeD60tISvFawa_4TN1fPUYNx0QYSWmxf5ixA7WFwYD-_ZYFvncY61Z8QswqQSE8pHW3J0R3ITJdfAbLwsRwlbdEQdnsCXRPTbprlp0UY9YGmHvv5uBY9HQ9DIW0brl9ATPUR0kFjO4PE9sZriCfypu7iJ5ZcaRM1exAf7-vRFgaGDjnz8mthdALotFUH6RaV6C6kup4oD9jiRVB8OeePjPdXvVJYt5xB6gabNL6felROkFjPp4ZxQ82QXr-xsXPGj0xOZ79ayPJ63ddzISL2XxE7IjJIwsuVSxRDoIRbaCyfUICj-Q",
+                "kid": "gdi-demo",
+                "e": "AQAB",
+                "kty": "RSA"
+            }]
+        }
+    },
+    'https://rems.ejprd.nbis.se/api/jwk': {
+        name: 'REMS-EJPRD-NBIS',
+        jwks: {
+            "keys": [{
+                "n": "lrypbF1I7yeU9MQPCz1eK7ckD7EX5AaB2cyEoeBWzog2GpMowPu8R1rIzvWA7C2Bz9ihISBB4kBF7CBhhFqQvVMjFFxtId5Kp-Nyb3PHTuPbieV79wjZ4RGuAPVlHzLG9jC5IZmu1kR9hetieooeXmSIMFtshPr7Iv1oqV6SbPkVdK3nHs_cpOEr0GMxC6YLcJ11v7z01bb_LRrA8MTShxVbNXL2sj6EK30UK7INjLnYKwwIRrABODPE80h1hPumuGatSTb0dVQs3ymncNDKhu-eCP26HamjetyPrEgarVTtf9psQt8SStZNN6ya8hCJ2U-vvsbXUnz7INfXeaj4bQ",
+                "kid": "gdi-demo",
+                "e": "AQAB",
+                "kty": "RSA"
+             }]
+        }
+    },
+    'https://rems.gdifr.lindan.se/api/jwk': {
+        name: 'REMS-GDI-FR',
+        jwks: {
+            
+        } 
+    },
+    'https://id.portal.dev.gdi.lu/realms/gdi/protocol/openid-connect/certs': {
+        name: 'GDI-USER-PORTAL',
+        jwks: {
+            "keys": [{
+                "kid": "B5u27I_1ZijDs9VSZe9nnjmXJzerN8hcdw2ObhJZ0Wo",
+                "kty": "RSA",
+                "alg": "RS256",
+                "use": "sig",
+                "x5c": [
+                    "MIIClzCCAX8CBgGMHVjjUjANBgkqhkiG9w0BAQsFADAPMQ0wCwYDVQQDDARja2FuMB4XDTIzMTEyOTIzMDgzM1oXDTMzMTEyOTIzMTAxM1owDzENMAsGA1UEAwwEY2thbjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMURH583sY9NVU81ozXOE592Ksb6YU1m2dZ34k15Ck/gJy2pzBYs+G5i2sNsxL8fK5LYr1uvOo3eVehmi0ClejdXVQAoq82dzZY2xTcQCF7PoQnvR/dnWR0mMgWBoJzPwj57rMaVRN2qPcZDMU8Egp2662xftLcOekHQqWI8DDWCqvi8eKb7oPscRQu58Q0d+u0Pb5ECYaxwaCkc/+L2yuKhAcetx92WgeCDMcpFF1iteVIrDJ4Z20RRWDdoOJfiv85oSlGcq/7m8g2HI5r55AUxtSxMKbf7hbOX2nttz0qzVJZ5E15jwet9yxMRlwbMgctzWeAIC8p0ClbmT3FFR+sCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAjykLIjiCFjHmJCj60rC2CBq5MFf7knJuCIZKOMUU2e1zZI1kkI4IZ7yQT9iHURU2bZngvKd8EKwoPw1MDlNgGVDA/UvjOgCOXKOKkd9VuEMk7pGbjURBbRiPmJqv2mKs16/7Jzt3n/xBF513H35AO54JwoMg0gFjG40HnMz7OhIxnUgCls0Slk0BE7hGpVwXs9Iw7tPDrTnVSkObwpdlgQVaqI2igylPYsE6C7piMNEkmaPGwrLNsq9kVzph+Rj9C5/7HyK6N3M397JDTp9F1wpDWMB/ZQrwQ5EHUJxaBbkoQ6IbdFwBlVtz2CzhllpPsnIF3Pn7RGfrQXp0B9zjCg=="
+                ],
+                "x5t": "ycx1qWUXrtbr0WOSEJ1hJvxVBdg",
+                "x5t#S256": "2JSGzMqerSzM1ZMt0WbvW20hCSH_rRF6Cf1EXsnNGqk",
+                "n": "xREfnzexj01VTzWjNc4Tn3YqxvphTWbZ1nfiTXkKT-AnLanMFiz4bmLaw2zEvx8rktivW686jd5V6GaLQKV6N1dVACirzZ3NljbFNxAIXs-hCe9H92dZHSYyBYGgnM_CPnusxpVE3ao9xkMxTwSCnbrrbF-0tw56QdCpYjwMNYKq-Lx4pvug-xxFC7nxDR367Q9vkQJhrHBoKRz_4vbK4qEBx63H3ZaB4IMxykUXWK15UisMnhnbRFFYN2g4l-K_zmhKUZyr_ubyDYcjmvnkBTG1LEwpt_uFs5fae23PSrNUlnkTXmPB633LExGXBsyBy3NZ4AgLynQKVuZPcUVH6w",
+                "e": "AQAB"
+            },
+            {
+                "kid": "3h7HPbB1Xdx5kCTyxtoRTudc00r1dCEop5cFHponCCs",
+                "kty": "RSA",
+                "alg": "RSA-OAEP",
+                "use": "enc",
+                "x5c": [
+                    "MIIClzCCAX8CBgGMHVjkPTANBgkqhkiG9w0BAQsFADAPMQ0wCwYDVQQDDARja2FuMB4XDTIzMTEyOTIzMDgzNFoXDTMzMTEyOTIzMTAxNFowDzENMAsGA1UEAwwEY2thbjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK/YuafeRxwCIA9MnzX/GfH9Js073yX2tz6FjoZSTsFxpjHHKZLqBv6pQljMgDHhR/lArq6IqX1VTZq1c76Ez/acukw3JaFCW1FKof6QJ2qsUm8l3hqBICyQ5D20GM2ZKddKSY2Ux2Fl5HibCx5a8k7YMZZPSCT+mOfagWJvsqGqp9k1Za7vKKpvB0W+8MzRV+hQnBuSVujVfx0uMT9DSBoLIuyhT8LYblFt8ys+QKmr/GK+I0hyiQBHq2LwF61xwOXo/hQYR/3S2KE5qMT+PN0rNiykg9AZhX7QWHc62dKXA67mnTOR+T0utw1a2uTT3T/ppTtj4gwFLJ+J5wiib4ECAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAc494XGxjSw8yRicpnk00jIdbZ3SgeJadkXhAm13yeX+YYgUgk08MDIr4laPY4I6zBb/L3bz6j132TUBYDXriJ1EokHp6kOM2bN9UDMFQEmsaMs2wcFPDNu8p/fbMoljeGF3D5YiQPJUlBb1AX/3HWK6qFIJlQRdppUneJ2ANM2vBRN5mjX0Ss2dG0dXaM9NrTK5EmGc4io9yevWagK6/BNSgKVzZN6Sr0Yi5DX/NW8V43aGfUAxRZdLgTpbM1i/TKZGxYsL3KPquIYRn+SB9+U0uX7D6+5hKq5CJG4HAdawCtHqMGwLKlBkv2+Wj//zpM0LHv2vrmObUl3nJfDCU7A=="
+                ],
+                "x5t": "N3egWm3PL0N5Fo217HmGzomcHew",
+                "x5t#S256": "aHCtbY5l7uBfnrxGuVKQ-LDiuXDzMusaYrVwNBBE8-0",
+                "n": "r9i5p95HHAIgD0yfNf8Z8f0mzTvfJfa3PoWOhlJOwXGmMccpkuoG_qlCWMyAMeFH-UCuroipfVVNmrVzvoTP9py6TDcloUJbUUqh_pAnaqxSbyXeGoEgLJDkPbQYzZkp10pJjZTHYWXkeJsLHlryTtgxlk9IJP6Y59qBYm-yoaqn2TVlru8oqm8HRb7wzNFX6FCcG5JW6NV_HS4xP0NIGgsi7KFPwthuUW3zKz5Aqav8Yr4jSHKJAEerYvAXrXHA5ej-FBhH_dLYoTmoxP483Ss2LKSD0BmFftBYdzrZ0pcDruadM5H5PS63DVra5NPdP-mlO2PiDAUsn4nnCKJvgQ",
+                "e": "AQAB"
+            }]
+        }
     },
 };
 const POLICIES = {
@@ -280,8 +408,8 @@ mgr.getUser().then(function (user) {
             // process visa for basic view
             switch (visa.ga4gh_visa_v1.type) {
                 case 'LinkedIdentities':
+                    console.log(visa.ga4gh_visa_v1.value.split(';'));
                     if (visa.sub === user.profile.sub && visa.iss === config.oidc.authority) {
-                        // issued by elixir aai
                         for (const lid of visa.ga4gh_visa_v1.value.split(';').map(pair => pair.split(','))) {
                             let linkedId = {};
                             linkedId.sub = decodeURIComponent(lid[0]); // linked sub
@@ -289,6 +417,7 @@ mgr.getUser().then(function (user) {
                             linkedId.source = visa.ga4gh_visa_v1.source; // linked source - collected the info
                             linkedId.key = linkedId.sub + linkedId.iss;
                             linked_ids.set(linkedId.key, linkedId);
+                            console.log(linkedId);
                         }
                     } else {
                         let linkedId = {};
@@ -303,6 +432,7 @@ mgr.getUser().then(function (user) {
                                 linked_ids.set(linkedId.key, linkedId);
                             }
                         }
+                        console.log(linkedId);
                     }
                     break;
 
